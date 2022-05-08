@@ -1,0 +1,12 @@
+letter     = [A-Za-z]
+digit      = [0-9]
+digits     = digit digit*
+fraction   = . digits
+number     = digits (fraction)?
+identifier = (letter | _) (letter | _ | digit)*
+operator   = * | / | + | - | < | > | = | | | & | ~ | ^ | % | $ | ! | \n | 
+             += | ++ | -= | -- | == | >= | >> | <= | << | *= | ** | /= | ^= | 
+             != | %= | &= | && | |= | || | ~= | >>= | <<= | **=
+string     = " any* "
+commentary = # any* #
+separator  = ; | : | . | , | ( | ) | [ | ] | { | }

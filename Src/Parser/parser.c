@@ -2,55 +2,117 @@
 
 struct Parser *Parser_New(const char *fileName)
 {
-	struct Parser *par = calloc(1, sizeof (struct Parser));
-	if (par == NULL) {
-		return par;
+	struct Parser *parser = calloc(1, sizeof (struct Parser));
+	if (parser == NULL) {
+		return parser;
 	}
-	par->fileName = fileName;
+	parser->fileName = fileName;
 	
-	par->tok = Tokenizer_New(fileName);
-	if (par->tok->state = TOK_STATE_TokenizerError) {
-		par->errorCode = PARSER_ERR_TokenizerError;
-		return par;
+	parser->tok = Tokenizer_New(fileName);
+	if (parser->tok->errorCode != TOK_ERR_NoError) {
+		parser->errorCode = PARSER_ERR_TokenizerError;
+		return parser;
 	}
 
-	par->lineNumber = 1;
-	par->errorCode = PARSER_ERR_NoError;
-	return par;
+	parser->lineNumber = 1;
+	parser->errorCode = PARSER_ERR_NoError;
+	return parser;
 }
 
-struct Tree_Node *Parser_GetSyntaxTree(struct Parser *par)
-{
-	GetGrammar(par);
-}
+// struct Tree_Node *Parser_GetSyntaxTree(struct Parser *parser)
+// {
 
-static struct Tree_Node *Parser_GetGrammar(struct Parser *par)
-{
-	par->treeRoot = getNumber(par);
-}
+// }
 
-static struct Tree_Node *Parser_GetNumber(struct Parser *par)
-{
+// static struct Tree_Node *Parser_GetGrammar(struct Parser *parser)
+// {
 
-}
+// }
 
-static struct Tree_Node *Parser_GetUnarySign(struct Parser *par)
-{
+// static struct Tree_Node *Parser_GetAssignment(struct Parser *parser)
+// {
 
-}
+// }
 
-static struct Tree_Node *Parser_GetIdentifier(struct Parser *par)
-{
+// static struct Tree_Node *Parser_GetFunction(struct Parser *parser)
+// {
+
+// }
+
+// static struct Tree_Node *Parser_GetWhile(struct Parser *parser)
+// {
+
+// }
+
+// static struct Tree_Node *Parser_GetFor(struct Parser *parser)
+// {
+
+// }
+
+// static struct Tree_Node *Parser_GetIfElse(struct Parser *parser)
+// {
+
+// }
+
+// static struct Tree_Node *Parser_GetLogical(struct Parser *parser)
+// {
+
+// }
+
+// static struct Tree_Node *Parser_GetAddSub(struct Parser *parser)
+// {
+
+// }
+
+// static struct Tree_Node *Parser_GetMulDiv(struct Parser *parser)
+// {
+
+// }
+
+// static struct Tree_Node *Parser_GetPower(struct Parser *parser)
+// {
+
+// }
+
+// static struct Tree_Node *Parser_GetBitOpeartion(struct Parser *parser)
+// {
+
+// }
+
+// static struct Tree_Node *Parser_GetParenthesisExpression(struct Parser *parser)
+// {
+
+// }
+
+// static struct Tree_Node *Parser_GetNumber(struct Parser *parser)
+// {
+// 	struct Token *token = Tokenizer_GetNextToken(parser->tok);
+// 	// REQUIRE_TYPE(TOKEN_TYPE_Number, token);
+// 	return token;
+// }
+
+// static struct Tree_Node *Parser_GetKeyword(struct Parser *parser)
+// {
+
+// }
+
+// static struct Tree_Node *Parser_GetUnarySign(struct Parser *parser)
+// {
 	
-}
+// }
 
-struct Parser *Parser_Delete(struct Parser *par)
+// static struct Tree_Node *Parser_GetIdentifier(struct Parser *parser)
+// {
+	
+// }
+
+struct Parser *Parser_Delete(struct Parser *parser)
 {
-	par->errorCode = PARSER_ERR_NoError;
-	par->lineNumber = 0;
-	par->fileName = NULL;
-	par->treeRoot = Tree_Delete(par->treeRoot);
-	par->tok = Tokenizer_Delete(par->tok);
-	free(par);
+	parser->errorCode = PARSER_ERR_NoError;
+	parser->lineNumber = 0;
+	parser->fileName = NULL;
+	parser->treeRoot = Tree_Delete(parser->treeRoot);
+	parser->tok = Tokenizer_Delete(parser->tok);
+	free(parser);
 	return NULL;
 }
