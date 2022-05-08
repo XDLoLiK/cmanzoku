@@ -1,6 +1,6 @@
 #include "Manzoku.h"
 
-#define KEYWORDS_NUMBER 9
+#define KEYWORDS_NUMBER 11
 
 static const char *reservedKeywords[KEYWORDS_NUMBER] = {
     "if",
@@ -8,35 +8,32 @@ static const char *reservedKeywords[KEYWORDS_NUMBER] = {
     "for",
     "while",
     "ret",
-    "continue",
-    "break",
-    "function",
+    "func",
+    "stop", // break
+    "next", // continue
+    "addr", // &
+    "eval", // *
     "void"
 };
 
-Token_Code GetKeyword(const char *tokenString)
+bool IsKeyword(const char *tokenString)
 {
-	for (int kw = 0; kw < KEYWORDS_NUMBER; kw++) {
-		if (strcmp(tokenString, reservedKeywords[kw]) == 0) {
-			// all ekywords start from 100 and in reservedKeywords
-			// array they are in an appropriate order
-			return 100 + kw; 
-		}
-	}
-	return TONEN_OP_NotAnOperator;
+    for (int kw = 0; kw < KEYWORDS_NUMBER; kw++) {
+        if (strncmp(tokenString, reservedKeywords[kw], strlen(reservedKeywords[kw])) == 0) {
+            return true; 
+        }
+    }
+    return false;
 }
 
-Token_Code GetOneCharOperator(char firstSymbol)
+enum Token_Code GetKeyword(const char *tokenString)
 {
-
-}
-
-Token_Code GetTwoCharOperator(char firstSymbol, char secondSymbol)
-{
-
-}
-
-Token_Code GetThreeCharOperator(char firstSymbol, char secondSymbol, char thirdSymbol)
-{
-
+    for (int kw = 0; kw < KEYWORDS_NUMBER; kw++) {
+        if (strncmp(tokenString, reservedKeywords[kw], strlen(reservedKeywords[kw])) == 0) {
+            // all keywords start from 100 and in reservedKeywords
+            // array they are placed in an appropriate order
+            return 100 + kw;
+        }
+    }
+    return TONEN_OP_NotAnOperator;
 }
