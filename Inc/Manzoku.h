@@ -12,7 +12,6 @@
 
 // general
 #include "token.h"
-#include "manerrors.h"
 
 // data structures
 #include "Structures/hashtable.h"
@@ -20,5 +19,7 @@
 
 // utilites
 #include "Utils/file.h"
+#include "Utils/maths.h"
+#include "Utils/type.h"
 
 #endif // Man_MANZOKU_H

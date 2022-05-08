@@ -15,15 +15,16 @@ struct Parser {
 	struct Tokenizer *tok;
 	const char *fileName;
 	enum Parser_Error errorCode;
+	struct Tree_Node *treeRoot;
 	int lineNumber;
 };
 
 // Main parse function
-struct Tree_Node *Parser_GetSyntaxTree(struct Parser *par);
+struct Tree_Node *Parser_GetSyntaxTree(struct Parser *parser);
 
 // Create/delete
 struct Parser *Parser_New(const char *fileName);
-struct Parser *Parser_Delete(struct Parser *par);
+struct Parser *Parser_Delete(struct Parser *parser);
 
 // Recursive descent
 // ...

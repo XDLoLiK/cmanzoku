@@ -1,6 +1,9 @@
 #ifndef Man_TOKEN_H
 #define Man_TOKEN_H
 
+#include <inttypes.h>
+#include <stdbool.h>
+
 enum Token_Type {
     TOKEN_TYPE_Endmarker   = 0,
     TOKEN_TYPE_Number      = 1,
@@ -10,7 +13,7 @@ enum Token_Type {
 };
 
 enum Token_Code {
-    TONEN_OP_NotAnOperator = 0
+    TONEN_OP_NotAnOperator = 0,
     TOKEN_OP_Add           = 10,
     TOKEN_OP_Sub           = 11,
     TOKEN_OP_Mul           = 12,
@@ -47,8 +50,21 @@ enum Token_Code {
     TOKEN_OP_SubEqual      = 43,
     TOKEN_OP_MulEqual      = 44,
     TOKEN_OP_DivEqual      = 45,
-    TOKEN_OP_NewLine       = 46,
-    TOKEN_OP_VarDecl       = 47,
+    TOKEN_OP_ModEqual      = 46,
+    TOKEN_OP_BitorEqual    = 47,
+    TOKEN_OP_BitandEqual   = 48,
+    TOKEN_OP_BitxorEqual   = 49,
+    TOKEN_OP_BitnotEqual   = 50,
+    TOKEN_OP_BitshlEqual   = 51,
+    TOKEN_OP_BitshrEqual   = 52,
+    TOKEN_OP_PowEqual      = 53,
+    TOKEN_OP_NewLine       = 54,
+    TOKEN_OP_VarDecl       = 55,
+    TOKEN_OP_Increment     = 56,
+    TOKEN_OP_Decrement     = 57,
+    TOKEN_OP_FunctionCall  = 58,
+    TOKEN_OP_GetAddres     = 59,
+    TOKEN_OP_AccessAddres  = 60,
     TOKEN_KW_If            = 100,
     TOKEN_KW_Else          = 101,
     TOKEN_KW_For           = 102,
@@ -57,21 +73,22 @@ enum Token_Code {
     TOKEN_KW_Continue      = 105,
     TOKEN_KW_Break         = 106,
     TOKEN_KW_Function      = 107,
-    TOKEN_KW_Void          = 108
+    TOKEN_KW_Void          = 108,
+    TOKEN_KW_GetAddress    = 109,
+    TOKEN_KW_AtAddress     = 110
 };
 
 struct Token {
     enum Token_Type type;
     union {
-        enum Token_Code code;
+        enum Token_Code operator;
         int64_t number;
         char *string;
+        char *identifier;
     };
 };
 
-Token_Code GetKeyword(const char *tokenString);
-Token_Code GetOneCharOperator(char firstSymbol);
-Token_Code GetTwoCharOperator(char firstSymbol, char secondSymbol);
-Token_Code GetThreeCharOperator(char firstSymbol, char secondSymbol, char thirdSymbol);
+bool IsKeyword(const char *tokenString);
+enum Token_Code GetKeyword(const char *tokenString);
 
 #endif // Man_TOKEN_H
