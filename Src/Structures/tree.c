@@ -25,28 +25,28 @@ void Tree_Upload(struct Tree_Node *root, FILE *file, int depth)
 		fprintf(file, "new\n");
 
 		PRINT_N_TABS(depth + 1);
-		fprintf(file, "t: %d\n", root->token->type);
+		fprintf(file, "type: %d\n", root->token->type);
 
 		PRINT_N_TABS(depth + 1);
 		switch (root->token->type) {
 			case TOKEN_TYPE_Endmarker:
-				fprintf(file, "v: %d\n", root->token->operator);
+				fprintf(file, "value: %d\n", root->token->operator);
 				break;
 
 			case TOKEN_TYPE_Number:
-				fprintf(file, "v: %" PRId64 "\n", root->token->number);
+				fprintf(file, "value: %" PRId64 "\n", root->token->number);
 				break;
 				
 			case TOKEN_TYPE_String:
-				fprintf(file, "v: %s\n", root->token->string);
+				fprintf(file, "value: %s\n", root->token->string);
 				break;
 			
 			case TOKEN_TYPE_Identifier:
-				fprintf(file, "v: %s\n", root->token->identifier);
+				fprintf(file, "value: %s\n", root->token->identifier);
 				break;
 			
 			case TOKEN_TYPE_Operator:
-				fprintf(file, "v: %d\n", root->token->operator);
+				fprintf(file, "value: %d\n", root->token->operator);
 				break;
 		}
 		
@@ -84,27 +84,27 @@ struct Tree_Node *Tree_Download(FILE *file)
 	if (token == NULL) {
 		return NULL;
 	}
-	fscanf(file, " t: %u", &token->type);
+	fscanf(file, " type: %u", &token->type);
 	
 	switch (token->type) {
 		case TOKEN_TYPE_Endmarker:
-			fscanf(file, " v: %u", &token->operator);
+			fscanf(file, " value: %u", &token->operator);
 			break;
 
 		case TOKEN_TYPE_Number:
-			fscanf(file, " v: %" PRId64, &token->number);
+			fscanf(file, " value: %" PRId64, &token->number);
 			break;
 			
 		case TOKEN_TYPE_String:
-			fscanf(file, " v: %64[^\n]", token->string);
+			fscanf(file, " value: %64[^\n]", token->string);
 			break;
 		
 		case TOKEN_TYPE_Identifier:
-			fscanf(file, " v: %64s", token->identifier);
+			fscanf(file, " value: %64s", token->identifier);
 			break;
 		
 		case TOKEN_TYPE_Operator:
-			fscanf(file, " v: %u", &token->operator);
+			fscanf(file, " value: %u", &token->operator);
 			break;
 	}
 
