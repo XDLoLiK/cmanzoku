@@ -12,9 +12,8 @@ bool IsSpace(char symbol)
 {
 	if ((symbol == ' ')  || (symbol == '\t') || 
 	    (symbol == '\r') || (symbol == '\f') || 
-	    (symbol == '\v')) {
+	    (symbol == '\v') || (symbol == '\n')) {
 		return true;	
-		// '\n' is important	
 	}
 	return false;
 }
