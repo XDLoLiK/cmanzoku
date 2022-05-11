@@ -1,6 +1,6 @@
-#include "Manzoku.h"
+#include "token.h"
 
-#define KEYWORDS_NUMBER 11
+#define KEYWORDS_NUMBER 13
 
 static const char *reservedKeywords[KEYWORDS_NUMBER] = {
     "if",
@@ -8,18 +8,20 @@ static const char *reservedKeywords[KEYWORDS_NUMBER] = {
     "for",
     "while",
     "ret",
-    "func",
-    "stop", // break
     "next", // continue
+    "stop", // break
+    "func",
+    "void",
     "addr", // &
     "eval", // *
-    "void"
+    "false",
+    "true"
 };
 
-bool IsKeyword(const char *tokenString)
+bool IsKeyword(const char *tokenString, int keywordLength)
 {
     for (int kw = 0; kw < KEYWORDS_NUMBER; kw++) {
-        if (strncmp(tokenString, reservedKeywords[kw], strlen(reservedKeywords[kw])) == 0) {
+        if (strncmp(tokenString, reservedKeywords[kw], max(keywordLength, strlen(reservedKeywords[kw]))) == 0) {
             return true; 
         }
     }
