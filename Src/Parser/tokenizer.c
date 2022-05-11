@@ -62,6 +62,10 @@ void Tokenizer_RecognizeStartOfData(struct Tokenizer *tok)
 {
     while (tok->bufferCurrent < tok->bufferEnd) {
         if (IsSpace(*tok->bufferCurrent)) {
+            if (*tok->bufferCurrent == '\n') {
+                tok->lineNumber++;
+                tok->currentLine = tok->bufferCurrent + 1;
+            }
             tok->bufferCurrent++;
             continue;
         }
@@ -314,10 +318,6 @@ struct Token *Tokenizer_RecognizeOperator(struct Tokenizer *tok)
                 default:  return Tokenizer_NewOperator(tok, TOKEN_OP_Mod);
             }
 
-        case '$':
-            tok->bufferCurrent++;
-            return Tokenizer_NewOperator(tok, TOKEN_OP_VarDecl);
-
         case ':':
             tok->bufferCurrent++;
             return Tokenizer_NewOperator(tok, TOKEN_OP_Colon);
@@ -333,12 +333,6 @@ struct Token *Tokenizer_RecognizeOperator(struct Tokenizer *tok)
                           return Tokenizer_NewOperator(tok, TOKEN_OP_Nequals);
                 default:  return Tokenizer_NewOperator(tok, TOKEN_OP_Lnot);
             }
-
-        case '\n':
-            tok->bufferCurrent++;
-            tok->lineNumber++;
-            tok->currentLine = tok->bufferCurrent + 1;
-            return Tokenizer_NewOperator(tok, TOKEN_OP_NewLine);
     }
 
     tok->errorCode = TOK_ERR_ImpossibleOperator;
@@ -391,7 +385,7 @@ struct Token *Tokenizer_NewIdentifier(struct Tokenizer *tok, char *identifier, i
         return token;
     }
 
-    if (IsKeyword(identifier)) {
+    if (IsKeyword(identifier, identifierLength)) {
         token->type = TOKEN_TYPE_Operator;
         token->operator = GetKeyword(identifier);
         return token;
@@ -462,11 +456,11 @@ struct Tokenizer *Tokenizer_Delete(struct Tokenizer *tok)
     tok->file = NULL;
 
     free(tok->bufferStart);
-    tok->bufferCurrent = NULL;
     tok->bufferStart   = NULL;
+    tok->bufferCurrent = NULL;
     tok->bufferEnd     = NULL;
     tok->currentToken  = NULL;
-    tok->currentLine = NULL;
+    tok->currentLine   = NULL;
     
     free(tok);
     return NULL;
