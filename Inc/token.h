@@ -1,8 +1,11 @@
 #ifndef Man_TOKEN_H
 #define Man_TOKEN_H
 
+#include "Utils/maths.h"
+
 #include <inttypes.h>
 #include <stdbool.h>
+#include <string.h>
 
 enum Token_Type {
     TOKEN_TYPE_Endmarker   = 0,
@@ -58,13 +61,12 @@ enum Token_Code {
     TOKEN_OP_BitshlEqual   = 51,
     TOKEN_OP_BitshrEqual   = 52,
     TOKEN_OP_PowEqual      = 53,
-    TOKEN_OP_NewLine       = 54,
-    TOKEN_OP_VarDecl       = 55,
-    TOKEN_OP_Increment     = 56,
-    TOKEN_OP_Decrement     = 57,
-    TOKEN_OP_FunctionCall  = 58,
-    TOKEN_OP_GetAddres     = 59,
-    TOKEN_OP_AccessAddres  = 60,
+    TOKEN_OP_Increment     = 54,
+    TOKEN_OP_Decrement     = 55,
+    TOKEN_OP_FunctionCall  = 56,
+    TOKEN_OP_GetAddres     = 57,
+    TOKEN_OP_AccessAddres  = 58,
+    TOKEN_OP_Index         = 59,
     TOKEN_KW_If            = 100,
     TOKEN_KW_Else          = 101,
     TOKEN_KW_For           = 102,
@@ -75,7 +77,9 @@ enum Token_Code {
     TOKEN_KW_Function      = 107,
     TOKEN_KW_Void          = 108,
     TOKEN_KW_GetAddress    = 109,
-    TOKEN_KW_AtAddress     = 110
+    TOKEN_KW_AtAddress     = 110,
+    TOKEN_KW_False         = 111,
+    TOKEN_KW_True          = 112
 };
 
 struct Token {
@@ -88,7 +92,7 @@ struct Token {
     };
 };
 
-bool IsKeyword(const char *tokenString);
+bool IsKeyword(const char *tokenString, int keywordLength);
 enum Token_Code GetKeyword(const char *tokenString);
 
 #endif // Man_TOKEN_H
