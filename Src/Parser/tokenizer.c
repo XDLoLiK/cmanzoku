@@ -88,8 +88,10 @@ void Tokenizer_RecognizeCommentary(struct Tokenizer *tok)
     tok->bufferCurrent++;
 
     while (tok->bufferCurrent < tok->bufferEnd) {
-        if (*tok->bufferCurrent == '#') {
+        if (*tok->bufferCurrent == '\n') {
+            tok->lineNumber++;
             tok->bufferCurrent++;
+            tok->currentLine = tok->bufferCurrent;
             return;            
         }
         tok->bufferCurrent++;
@@ -341,37 +343,27 @@ struct Token *Tokenizer_RecognizeOperator(struct Tokenizer *tok)
 
 struct Token *Tokenizer_RecognizeNumber(struct Tokenizer *tok)
 {
-    int64_t number = 0;
-    int digitsAfterDot = 0;
-
-    while (tok->bufferCurrent < tok->bufferEnd) {
-        if (IsDigit(*tok->bufferCurrent)) {
-            number *= 10;
-            number += *tok->bufferCurrent - '0';
-            tok->bufferCurrent++;
-            continue;
-        }
-
-        if (*tok->bufferCurrent == '.') {
-            tok->bufferCurrent++;
-            break;
-        }
-        return Tokenizer_NewNumber(tok, number);
+    int64_t number = 0; 
+    while (tok->bufferCurrent < tok->bufferEnd && IsDigit(*tok->bufferCurrent)) {
+        number *= 10;
+        number += *tok->bufferCurrent - '0';
+        tok->bufferCurrent++;
     }
+    number *= 1000;
 
-    while (tok->bufferCurrent < tok->bufferEnd) {
-        if (IsDigit(*tok->bufferCurrent)) {
-            if (digitsAfterDot < 3) {
-                number *= 10;
-                number += *tok->bufferCurrent - '0';
-                digitsAfterDot++;
+    if (*tok->bufferCurrent == '.') {
+        tok->bufferCurrent++;
+        int multiplier = 100;
+
+        for (int digitsNum = 0; digitsNum < 3; digitsNum++) {
+            int digit = 0;
+            if (IsDigit(*tok->bufferCurrent)) {
                 tok->bufferCurrent++;
-                continue;
+                number = *tok->bufferCurrent - '0';
             }
-            tok->errorCode = TOK_ERR_NumberPrecisionExceeded;
-            return NULL;
+            number += multiplier * digit;
+            multiplier /= 10;
         }
-        return Tokenizer_NewNumber(tok, number);
     }
 
     return Tokenizer_NewNumber(tok, number);
