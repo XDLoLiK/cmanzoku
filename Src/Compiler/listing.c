@@ -161,10 +161,10 @@ int Compiler_MultilineOperatorListing(struct Compiler *compiler, struct Tree_Nod
 
     struct Tree_Node *currentNode = operatorNode;
     while (currentNode != NULL) {
-        if ((currentNode->token->type == TOKEN_TYPE_Operator) &&
-            (currentNode->token->operator == TOKEN_KW_If    ||
-             currentNode->token->operator == TOKEN_KW_While ||
-             currentNode->token->operator == TOKEN_KW_VarDecl)) {
+        if ((currentNode->left->token->type == TOKEN_TYPE_Operator) &&
+            (currentNode->left->token->operator == TOKEN_KW_If    ||
+             currentNode->left->token->operator == TOKEN_KW_While ||
+             currentNode->left->token->operator == TOKEN_KW_VarDecl)) {
 
             switch (currentNode->left->token->operator) {
                 case TOKEN_KW_While:   Compiler_WhileStatementListing(compiler, currentNode->left); break;
@@ -300,7 +300,8 @@ int Compiler_ExpressionListing(struct Compiler *compiler, struct Tree_Node *expr
                 fprintf(compiler->listingFile, "\t\tpop rbx\n"
                                                "\t\tpop rax\n"
                                                "\t\timul rax, rbx\n"
-                                               "\t\tidiv 1000\n"
+                                               "\t\tmov rcx, 1000\n"
+                                               "\t\tidiv rcx\n"
                                                "\t\tpush rax\n");
                 break;
                 
@@ -468,7 +469,7 @@ int Compiler_ExpressionListing(struct Compiler *compiler, struct Tree_Node *expr
             case TOKEN_OP_FunctionCall:
                 Compiler_FunctionArgsListing(compiler, expressionNode->right);
                 fprintf(compiler->listingFile, "\t\tcall %s\n", expressionNode->left->token->identifier);
-                fprintf(compiler->listingFile, "\t\tadd rsp, 8 * %d", Compiler_CountLocalVariables(compiler, expressionNode->right));
+                fprintf(compiler->listingFile, "\t\tadd rsp, 8 * %d\n", Compiler_CountLocalVariables(compiler, expressionNode->right));
                 fprintf(compiler->listingFile, "\t\tpush rax\n");
                 break;
 
@@ -532,20 +533,25 @@ int Compiler_FunctionListing(struct Compiler *compiler, struct Tree_Node *functi
 
 int Compiler_FunctionParamsListing(struct Compiler *compiler, struct Tree_Node *functionNode)
 {
+    if (compiler == NULL || functionNode == NULL) {
+        return 1;
+    }
+    
+    
     return 0;    
 }
 
 int Compiler_FunctionPreambleListing(struct Compiler *compiler, struct Tree_Node *functionNode)
 {
-    if (compiler == NULL) {
+    if (compiler == NULL || functionNode == NULL) {
         return 1;
     }
 
     int localVars = Compiler_CountLocalVariables(compiler, functionNode);
-    fprintf(compiler->listingFile, "\n\t\t; preamble\n"
+    fprintf(compiler->listingFile, "\t\t; preamble\n"
                                    "\t\tpush rbp\n"
                                    "\t\tmov rbp, rsp\n"
-                                   "\t\tsub rsp 8 * %d\n\n",
+                                   "\t\tsub rsp, 8 * %d\n\n",
                                    localVars);
     return 0;
 }
