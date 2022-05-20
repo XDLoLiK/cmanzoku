@@ -64,8 +64,8 @@ enum Token_Code {
     TOKEN_OP_Increment     = 54,
     TOKEN_OP_Decrement     = 55,
     TOKEN_OP_FunctionCall  = 56,
-    TOKEN_OP_GetAddres     = 57,
-    TOKEN_OP_AccessAddres  = 58,
+    TOKEN_OP_GetAddr       = 57,
+    TOKEN_OP_AccessAddr    = 58,
     TOKEN_OP_Index         = 59,
     TOKEN_KW_If            = 100,
     TOKEN_KW_Else          = 101,
@@ -79,7 +79,8 @@ enum Token_Code {
     TOKEN_KW_GetAddress    = 109,
     TOKEN_KW_AtAddress     = 110,
     TOKEN_KW_False         = 111,
-    TOKEN_KW_True          = 112
+    TOKEN_KW_True          = 112,
+    TOKEN_KW_VarDecl       = 113
 };
 
 struct Token {

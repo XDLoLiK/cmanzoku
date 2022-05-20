@@ -44,6 +44,7 @@ struct Token *Tokenizer_RecognizeString(struct Tokenizer *tok);
 struct Token *Tokenizer_RecognizeOperator(struct Tokenizer *tok);
 struct Token *Tokenizer_RecognizeNumber(struct Tokenizer *tok);
 
+// Token creators
 struct Token *Tokenizer_NewIdentifier(struct Tokenizer *tok, char *identifier, int identifierLength);
 struct Token *Tokenizer_NewString(struct Tokenizer *tok, char *string, int stringLength);
 struct Token *Tokenizer_NewOperator(struct Tokenizer *tok, enum Token_Code code);

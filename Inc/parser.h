@@ -16,8 +16,6 @@
 	}														\
 }
 
-#define NEW_NODE(par) (Tree_NewNode(par->currentToken))
-
 #define REQUIRE_TYPE(t) {						\
 	if (parser->currentToken->type != t) {		\
 		RAISE(PARSER_ERR_WrongTokenType);		\
@@ -35,7 +33,8 @@ enum Parser_Error {
 	PARSER_ERR_UnsuccessfulAllocation = 1,
 	PARSER_ERR_TokenizerError         = 2,
 	PARSER_ERR_WrongTokenType         = 3,
-	PARSER_ERR_WrongOperator          = 4
+	PARSER_ERR_WrongOperator          = 4,
+	PARSER_ERR_ImpossibleOperator     = 5
 };
 
 struct Parser {
@@ -46,18 +45,20 @@ struct Parser {
 };
 
 // Main parse function
-struct Tree_Node *Parser_GetSyntaxTree(struct Parser *parser);
+struct Tree_Node *Parser_GetGrammar(struct Parser *parser);
 
 // Create/delete
 struct Parser *Parser_New(const char *fileName);
 struct Parser *Parser_Delete(struct Parser *parser);
 
 // Recursive descent
-struct Tree_Node *Parser_GetGrammar(struct Parser *parser);
+struct Tree_Node *Parser_GetMultilineOperator(struct Parser *parser);
+struct Tree_Node *Parser_GetVarDecl(struct Parser *parser);
 struct Tree_Node *Parser_GetIf(struct Parser *parser);
 struct Tree_Node *Parser_GetFor(struct Parser *parser);
 struct Tree_Node *Parser_GetWhile(struct Parser *parser);
 struct Tree_Node *Parser_GetFunction(struct Parser *parser);
+struct Tree_Node *Parser_GetParametersList(struct Parser *parser);
 struct Tree_Node *Parser_GetGetAddress(struct Parser *parser);
 struct Tree_Node *Parser_GetAtAddress(struct Parser *parser);	
 struct Tree_Node *Parser_GetExpression(struct Parser *parser);
@@ -73,8 +74,9 @@ struct Tree_Node *Parser_GetComparison(struct Parser *parser);
 struct Tree_Node *Parser_GetBitShift(struct Parser *parser);
 struct Tree_Node *Parser_GetAddSub(struct Parser *parser);
 struct Tree_Node *Parser_GetMulDivMod(struct Parser *parser);
-struct Tree_Node *Parser_GetPower(struct Parser *parser);
+struct Tree_Node *Parser_GetUnarySign(struct Parser *parser);
 struct Tree_Node *Parser_GetParenthesis(struct Parser *parser);
+struct Tree_Node *Parser_GetString(struct Parser *parser);
 struct Tree_Node *Parser_GetNumber(struct Parser *parser);
 struct Tree_Node *Parser_GetIdentifier(struct Parser *parser);
 
