@@ -96,10 +96,12 @@ struct Tree_Node *Tree_Download(FILE *file)
 			break;
 			
 		case TOKEN_TYPE_String:
+			token->string = calloc(64, sizeof (char));
 			fscanf(file, " value: %64[^\n]", token->string);
 			break;
 		
 		case TOKEN_TYPE_Identifier:
+			token->identifier = calloc(64, sizeof (char));
 			fscanf(file, " value: %64s", token->identifier);
 			break;
 		

@@ -20,14 +20,14 @@ struct HashTable *HashTable_New(size_t capacity)
     return ht;
 }
 
-int HashTable_Insert(struct HashTable *ht, char *key, char *value)
+int HashTable_Insert(struct HashTable *ht, char *identifier, char *scope, int value)
 {
     if ((ht == NULL) || (ht->size + ht->size >= ht->capacity)) {
          return 1;
     }
 
-    size_t elem_hash = HashTable_MainHash(key) % ht->capacity;
-    size_t inc = HashTable_SecondaryHash(key);
+    size_t elem_hash = HashTable_MainHash(identifier) % ht->capacity;
+    size_t inc = HashTable_SecondaryHash(identifier);
 
     for (size_t tries = 0; tries < ht->capacity; elem_hash = (elem_hash + inc) % ht->capacity, tries++) {
         switch (ht->state[elem_hash]) {
@@ -35,21 +35,24 @@ int HashTable_Insert(struct HashTable *ht, char *key, char *value)
                 [[fallthrough]];
             }
             case HT_STATE_Empty: {
-                ht->data[elem_hash].key   = calloc(strlen(key)   + 1, sizeof (char));
-                ht->data[elem_hash].value = calloc(strlen(value) + 1, sizeof (char));
-                strcpy(ht->data[elem_hash].value, value);
-                strcpy(ht->data[elem_hash].key, key);
+                ht->data[elem_hash].value      = value;
+                ht->data[elem_hash].identifier = calloc(strlen(identifier)   + 1, sizeof (char));
+                ht->data[elem_hash].scope      = calloc(strlen(scope) + 1, sizeof (char));
+                strcpy(ht->data[elem_hash].identifier, identifier);
+                strcpy(ht->data[elem_hash].scope, scope);
                 ht->state[elem_hash] = HT_STATE_Busy;
                 ht->size++;
                 return 0;
             }
             case HT_STATE_Busy: {
-                if (strcmp(key, ht->data[elem_hash].key) != 0) {
+                if (strcmp(identifier, ht->data[elem_hash].identifier) != 0 ||
+                    strcmp(scope,      ht->data[elem_hash].scope)      != 0) {
                     continue;
                 }
-                free(ht->data[elem_hash].value);
-                ht->data[elem_hash].value = calloc(strlen(value) + 1, sizeof (char));
-                strcpy(ht->data[elem_hash].value, value);
+                free(ht->data[elem_hash].scope);
+                ht->data[elem_hash].scope = calloc(strlen(scope) + 1, sizeof (char));
+                strcpy(ht->data[elem_hash].scope, scope);
+                ht->data[elem_hash].value = value;
                 return 0;
             }
             default: {
@@ -61,14 +64,14 @@ int HashTable_Insert(struct HashTable *ht, char *key, char *value)
     return 1;
 }
 
-size_t HashTable_Find(struct HashTable *ht, char *key)
+size_t HashTable_Find(struct HashTable *ht, char *identifier, char *scope)
 {
     if (ht == NULL) {
          return HT_NOT_FOUND;
     }
 
-    size_t elem_hash = HashTable_MainHash(key) % ht->capacity;
-    size_t inc = HashTable_SecondaryHash(key);
+    size_t elem_hash = HashTable_MainHash(identifier) % ht->capacity;
+    size_t inc = HashTable_SecondaryHash(identifier);
 
     for (size_t tries = 0; tries < ht->capacity; elem_hash = (elem_hash + inc) % ht->capacity, tries++) {
         switch (ht->state[elem_hash]) {
@@ -79,7 +82,8 @@ size_t HashTable_Find(struct HashTable *ht, char *key)
                 return HT_NOT_FOUND;
             }
             case HT_STATE_Busy: {
-                if (strcmp(key, ht->data[elem_hash].key) != 0) {
+                if (strcmp(identifier, ht->data[elem_hash].identifier) != 0 ||
+                    strcmp(scope,      ht->data[elem_hash].scope)      != 0) {
                     continue;
                 }
                 return elem_hash;
@@ -93,14 +97,14 @@ size_t HashTable_Find(struct HashTable *ht, char *key)
     return HT_NOT_FOUND;
 }
 
-int HashTable_Erase(struct HashTable *ht, char *key)
+int HashTable_Erase(struct HashTable *ht, char *identifier, char *scope)
 {
     if (ht == NULL) {
         return 1;
     }
 
-    size_t elem_hash = HashTable_MainHash(key) % ht->capacity;
-    size_t inc = HashTable_SecondaryHash(key);
+    size_t elem_hash = HashTable_MainHash(identifier) % ht->capacity;
+    size_t inc = HashTable_SecondaryHash(identifier);
 
     for (size_t tries = 0; tries < ht->capacity; elem_hash = (elem_hash + inc) % ht->capacity, tries++) {
         switch (ht->state[elem_hash]) {
@@ -111,11 +115,12 @@ int HashTable_Erase(struct HashTable *ht, char *key)
                 return 1;
             }
             case HT_STATE_Busy: {
-                if (strcmp(key, ht->data[elem_hash].key) != 0) {
+                if (strcmp(identifier, ht->data[elem_hash].identifier) != 0 ||
+                    strcmp(scope,      ht->data[elem_hash].scope)      != 0) {
                     continue;
                 }
-                free(ht->data[elem_hash].key);
-                free(ht->data[elem_hash].value);
+                free(ht->data[elem_hash].identifier);
+                free(ht->data[elem_hash].scope);
                 ht->state[elem_hash] = HT_STATE_Deleted;
                 ht->size--;
                 return 0;
@@ -145,8 +150,8 @@ struct HashTable *HashTable_Delete(struct HashTable *ht)
     
     for (size_t i = 0; i < ht->capacity; ++i) {
         if (ht->state[i] == HT_STATE_Busy) {
-            free(ht->data[i].value);
-            free(ht->data[i].key);            
+            free(ht->data[i].scope);
+            free(ht->data[i].identifier);            
         }
     }
     free(ht->data);
