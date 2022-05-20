@@ -1,30 +1,30 @@
-APPLICATION = $(notdir $(CURDIR)).out
+APPLICATION = $(notdir $(CURDIR))
 
 BUILD = debug
+
+SRC_DIR   = Src
+BIN_DIR   = Bin
+INC_DIR   = Inc
 
 CXX = g++
 CXXFLAGS = -Wall -Wextra -no-pie -msse4.2 -mavx2 -I $(INC_DIR)
 
 CC = gcc
-CFLAGS = -Wall -Wextra -no-pie -msse4.2 -mavx2 -I $(INC_DIR)
+СCFLAGS = -Wall -Wextra -no-pie -msse4.2 -mavx2 -I $(INC_DIR)
 
 AS = nasm
 ASFLAGS = -felf64
 
 ifeq ($(BUILD), debug)
-	CFLAGS += -O0 -g -fdiagnostics-color=always
+	BUILD_DIR = Build
+	СCFLAGS += -O0 -g -fdiagnostics-color=always
 	CXXFLAGS += -O0 -g -fdiagnostics-color=always
-	BUILD_DIR = build-debug
 else
+	BUILD_DIR = /usr/bin
 	ASFLAGS += -s
-	CFLAGS += -s -O2
+	СCFLAGS += -s -O2
 	CXXFLAGS += -s -O2
-	BUILD_DIR = build-release
 endif
-
-SRC_DIR  = src
-BIN_DIR  = bin
-INC_DIR  = inc
 
 SRC =  $(shell find $(SRC_DIR) -name "*.c")
 ASM =  $(shell find $(SRC_DIR) -name "*.asm")
@@ -34,23 +34,23 @@ AS_OBJ = $(addprefix $(BIN_DIR)/, $(ASM:$(SRC_DIR)/%=%.o))
 
 $(BUILD_DIR)/$(APPLICATION): $(CC_OBJ) $(AS_OBJ)
 	@mkdir -p $(dir $@)
-	$(CC) -o $@ $^ $(CFLAGS)
+	$(CC) -o $@ $^ $(СCFLAGS)
 
 -include $(addprefix $(BIN_DIR)/, $(SRC:.c=.d))
 -include $(addprefix $(BIN_DIR)/, $(ASM:.asm=.d))
 
 $(CC_OBJ) : $(BIN_DIR)/%.c.o : $(SRC_DIR)/%.c
 	@mkdir -p $(dir $@)
-	$(CC) -MD -c -o $@ $< $(CFLAGS)
+	$(CC) -MD -c -o $@ $< $(СCFLAGS)
 
 $(AS_OBJ) : $(BIN_DIR)/%.asm.o : $(SRC_DIR)/%.asm
 	@mkdir -p $(dir $@)
-	$(AS) -MD -o $@ $< $(ASFLAGS)
+	$(AS) -MD  льо0щ.-o $@ $< $(ASFLAGS)
 
 .PHONY: info clean
 
 info:
-	@echo "[*] Sources: ${SRC}             "
+	@echo "[*] Sources: ${SRC} ${ASM}"
 	@echo "[*] Objects: ${CC_OBJ} $(AS_OBJ)"
 
 clean:
