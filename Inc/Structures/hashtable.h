@@ -9,6 +9,7 @@
 #include <inttypes.h>
 
 #define HT_NOT_FOUND SIZE_MAX
+#define FUNCTION     -1
 
 enum HashTableState {
     HT_STATE_Empty   = 0,
@@ -17,8 +18,9 @@ enum HashTableState {
 };
 
 struct HashTableElem {
-    char *key;
-    char *value;
+    char *identifier;
+    char *scope;
+    int value;
 };
 
 struct HashTable {
@@ -34,9 +36,9 @@ struct HashTable *HashTable_Delete(struct HashTable *ht);
 
 // RU
 size_t HashTable_Size(struct HashTable const *ht);
-size_t HashTable_Find(struct HashTable *ht, char *key);
-int HashTable_Erase(struct HashTable *ht, char *key);
-int HashTable_Insert(struct HashTable *ht, char *key, char *value);
+size_t HashTable_Find(struct HashTable *ht, char *identifier, char *scope);
+int HashTable_Erase(struct HashTable *ht, char *identifier, char *scope);
+int HashTable_Insert(struct HashTable *ht, char *identifier, char *scope, int value);
 
 // HASH
 size_t HashTable_MainHash(char *str);
