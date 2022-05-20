@@ -87,3 +87,16 @@ void Man_PrintParserError(struct Parser *parser)
 	}
 	exit(0);
 }
+
+void Man_PrintCompilerError(struct Compiler *compiler)
+{
+	switch (compiler->errorCode) {
+		case COMPILER_ERR_NoError:
+			return;
+
+		default:
+			fprintf(stderr, RED("ERROR: ") "Unrecognisable Error\n");
+			break;
+	}
+	exit(0);
+}

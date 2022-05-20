@@ -1,6 +1,6 @@
 #include "token.h"
 
-#define KEYWORDS_NUMBER 13
+#define KEYWORDS_NUMBER 14
 
 static const char *reservedKeywords[KEYWORDS_NUMBER] = {
     "if",
@@ -15,13 +15,15 @@ static const char *reservedKeywords[KEYWORDS_NUMBER] = {
     "addr", // &
     "eval", // *
     "false",
-    "true"
+    "true",
+    "var"
 };
 
 bool IsKeyword(const char *tokenString, int keywordLength)
 {
     for (int kw = 0; kw < KEYWORDS_NUMBER; kw++) {
-        if (strncmp(tokenString, reservedKeywords[kw], max(keywordLength, strlen(reservedKeywords[kw]))) == 0) {
+        if (strncmp(tokenString, reservedKeywords[kw], 
+                    max(keywordLength, strlen(reservedKeywords[kw]))) == 0) {
             return true; 
         }
     }
