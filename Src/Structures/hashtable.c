@@ -36,8 +36,8 @@ int HashTable_Insert(struct HashTable *ht, char *identifier, char *scope, int va
             }
             case HT_STATE_Empty: {
                 ht->data[elem_hash].value      = value;
-                ht->data[elem_hash].identifier = calloc(strlen(identifier)   + 1, sizeof (char));
-                ht->data[elem_hash].scope      = calloc(strlen(scope) + 1, sizeof (char));
+                ht->data[elem_hash].identifier = calloc(strlen(identifier) + 1, sizeof (char));
+                ht->data[elem_hash].scope      = calloc(strlen(scope)      + 1, sizeof (char));
                 strcpy(ht->data[elem_hash].identifier, identifier);
                 strcpy(ht->data[elem_hash].scope, scope);
                 ht->state[elem_hash] = HT_STATE_Busy;
@@ -45,8 +45,7 @@ int HashTable_Insert(struct HashTable *ht, char *identifier, char *scope, int va
                 return 0;
             }
             case HT_STATE_Busy: {
-                if (strcmp(identifier, ht->data[elem_hash].identifier) != 0 ||
-                    strcmp(scope,      ht->data[elem_hash].scope)      != 0) {
+                if (strcmp(identifier, ht->data[elem_hash].identifier) != 0) {
                     continue;
                 }
                 free(ht->data[elem_hash].scope);
