@@ -349,20 +349,16 @@ struct Token *Tokenizer_RecognizeNumber(struct Tokenizer *tok)
         number += *tok->bufferCurrent - '0';
         tok->bufferCurrent++;
     }
-    number *= 1000;
+    number *= 100;
 
     if (*tok->bufferCurrent == '.') {
         tok->bufferCurrent++;
-        int multiplier = 100;
+        int multiplier = 10;
 
-        for (int digitsNum = 0; digitsNum < 3; digitsNum++) {
-            int digit = 0;
-            if (IsDigit(*tok->bufferCurrent)) {
-                tok->bufferCurrent++;
-                number = *tok->bufferCurrent - '0';
-            }
-            number += multiplier * digit;
+        while (tok->bufferCurrent < tok->bufferEnd && IsDigit(*tok->bufferCurrent)) {
+            number += (*tok->bufferCurrent - '0') * multiplier;
             multiplier /= 10;
+            tok->bufferCurrent++;
         }
     }
 
