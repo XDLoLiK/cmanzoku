@@ -24,7 +24,7 @@ int Compiler_CreateListingPreamble(struct Compiler *compiler)
                                    "\t\tcall main\n"
                                    "\t\tmov rdi, rax\n"
                                    "\t\tmov rax, 0x3c\n" // 0x3c is system function for exit
-                                   "\t\tsyscall\n\n",
+                                   "\t\tsyscall\n",
                                    compiler->listingName);
     return 0;
 }
@@ -44,7 +44,8 @@ int Compiler_GrammarListing(struct Compiler *compiler, struct Tree_Node *grammar
 
         switch (currentNode->token->operator) {
             case TOKEN_KW_Function: 
-                compiler->localVarCount = 0;
+                compiler->localVarAmount = Compiler_CountLocalVariables(compiler, currentNode->left);
+                compiler->localVarCount  = 0;
                 strcpy(compiler->currentScope, currentNode->left->token->identifier);
                 Compiler_FunctionListing(compiler, currentNode->left);
                 break;
@@ -65,19 +66,28 @@ int Compiler_GrammarListing(struct Compiler *compiler, struct Tree_Node *grammar
 }
 
 /* GLOBALS NOT IMPLEMENTED YET */
-int Compiler_VarDeclListing(struct Compiler *compiler, struct Tree_Node *varDecLNode)
+int Compiler_VarDeclListing(struct Compiler *compiler, struct Tree_Node *varDeclNode)
 {
-    if (compiler == NULL || varDecLNode == NULL) {
+    if (compiler == NULL || varDeclNode == NULL) {
         return 1;
     }
 
-    struct Tree_Node *currentNode = varDecLNode;
-    while (currentNode->right != NULL) {
+    struct Tree_Node *currentNode = varDeclNode;
+    while (currentNode != NULL) {
+        char *currentIdentifier = currentNode->left->left->token->identifier;
         compiler->localVarCount++;
-        HashTable_Insert(compiler->identifiersList, varDecLNode->left->left->token->identifier,
-                         compiler->currentScope,    compiler->localVarCount);
-        Compiler_ExpressionListing(compiler, varDecLNode->left);
-        fprintf(compiler->listingFile, "\t\tadd rsp, 8 * 1\n");
+        int variableOffset = compiler->localVarCount; 
+
+        HashTable_Insert(compiler->identifiersList, currentIdentifier,
+                         compiler->currentScope,    variableOffset);
+        
+        fprintf(compiler->listingFile, "\t\t; %s\n", currentIdentifier);
+
+        Compiler_ExpressionListing(compiler, currentNode->left->right);
+        fprintf(compiler->listingFile, "\t\tpop rax\n"
+                                       "\t\tmov qword [rbp - 8 * %d], rax\n",
+                                       variableOffset);
+
         currentNode = currentNode->right;
     }
 
@@ -93,6 +103,7 @@ int Compiler_IfStatementListing(struct Compiler *compiler, struct Tree_Node *ifN
     int ifFalse = compiler->labelCount;
     compiler->labelCount += 1;
 
+    fprintf(compiler->listingFile, "\t\t; if condition\n");
     Compiler_ExpressionListing(compiler, ifNode->left);
     fprintf(compiler->listingFile, "\t\tpop rax\n"
                                    "\t\tcmp rax, 0\n"
@@ -104,16 +115,19 @@ int Compiler_IfStatementListing(struct Compiler *compiler, struct Tree_Node *ifN
         int skipElse = compiler->labelCount;
         compiler->labelCount += 1;
 
+        fprintf(compiler->listingFile, "\t\t; if body\n");
         Compiler_MultilineOperatorListing(compiler, ifNode->right->left);
         fprintf(compiler->listingFile, "\t\tjmp .L%d\n"
-                                       ".L%d:\n", 
+                                       ".L%d:\n",
                                        skipElse, ifFalse);
 
+        fprintf(compiler->listingFile, "\t\t; else body\n");
         Compiler_MultilineOperatorListing(compiler, ifNode->right->right);
         fprintf(compiler->listingFile, ".L%d:\n", skipElse);
         return 0;
     }
 
+    fprintf(compiler->listingFile, "\t\t; if body\n");
     Compiler_MultilineOperatorListing(compiler, ifNode->right);
     fprintf(compiler->listingFile, ".L%d:\n", ifFalse);
     return 0;
@@ -140,12 +154,13 @@ int Compiler_WhileStatementListing(struct Compiler *compiler, struct Tree_Node *
     compiler->labelCount += 2;
 
     fprintf(compiler->listingFile, ".L%d:\n", whileLabel);
-
+    fprintf(compiler->listingFile, "\t\t; while condition\n");
     Compiler_ExpressionListing(compiler, whileNode->left);
     fprintf(compiler->listingFile, "\t\tpop rax\n"
                                    "\t\tcmp rax, 0\n"
                                    "\t\tje .L%d\n", endLabel);
 
+    fprintf(compiler->listingFile, "\t\t; while body\n");
     Compiler_MultilineOperatorListing(compiler, whileNode->right);
     fprintf(compiler->listingFile, "\t\tjmp .L%d\n"
                                    ".L%d:\n",
@@ -192,19 +207,25 @@ int Compiler_ExpressionListing(struct Compiler *compiler, struct Tree_Node *expr
         return 1;
     }
 
-    Compiler_ExpressionListing(compiler, expressionNode->left);
-    Compiler_ExpressionListing(compiler, expressionNode->right);
+    if (expressionNode->token->type == TOKEN_TYPE_Operator &&
+        expressionNode->token->operator != TOKEN_OP_FunctionCall) {
+        
+        Compiler_ExpressionListing(compiler, expressionNode->left);
+        Compiler_ExpressionListing(compiler, expressionNode->right);
+    }
 
     if (expressionNode->token->type == TOKEN_TYPE_Operator) {
         switch (expressionNode->token->operator) {
             case TOKEN_OP_Comma:
                 // excluding top stack element as the value of comma
                 // operator is the value of the rightest operand
-                fprintf(compiler->listingFile, "\t\tadd rsp, 8 * 1\n");
+                fprintf(compiler->listingFile, "\t\t; ,\n"
+                                               "\t\tadd rsp, 8 * 1\n");
                 break;
 
             case TOKEN_OP_Bitor:
-                fprintf(compiler->listingFile, "\t\tpop rax\n"
+                fprintf(compiler->listingFile, "\t\t; |\n"
+                                               "\t\tpop rax\n"
                                                "\t\tmov rcx, 1000\n"
                                                "\t\tidiv rcx\n"
                                                "\t\tmov rbx, rax\n"
@@ -217,7 +238,8 @@ int Compiler_ExpressionListing(struct Compiler *compiler, struct Tree_Node *expr
                 break;
 
             case TOKEN_OP_Bitxor:
-                fprintf(compiler->listingFile, "\t\tpop rax\n"
+                fprintf(compiler->listingFile, "\t\t; ^\n"
+                                               "\t\tpop rax\n"
                                                "\t\tmov rcx, 1000\n"
                                                "\t\tidiv rcx\n"
                                                "\t\tmov rbx, rax\n"
@@ -230,7 +252,8 @@ int Compiler_ExpressionListing(struct Compiler *compiler, struct Tree_Node *expr
                 break;
 
             case TOKEN_OP_Bitand:
-                fprintf(compiler->listingFile, "\t\tpop rax\n"
+                fprintf(compiler->listingFile, "\t\t; &\n"
+                                               "\t\tpop rax\n"
                                                "\t\tmov rcx, 1000\n"
                                                "\t\tidiv rcx\n"
                                                "\t\tmov rbx, rax\n"
@@ -243,7 +266,8 @@ int Compiler_ExpressionListing(struct Compiler *compiler, struct Tree_Node *expr
                 break;
 
             case TOKEN_OP_Bitshr:
-                fprintf(compiler->listingFile, "\t\tpop rax\n"
+                fprintf(compiler->listingFile, "\t\t; >>\n"
+                                               "\t\tpop rax\n"
                                                "\t\tmov rcx, 1000\n"
                                                "\t\tidiv rcx\n"
                                                "\t\tmov rcx, rax\n"
@@ -256,7 +280,8 @@ int Compiler_ExpressionListing(struct Compiler *compiler, struct Tree_Node *expr
                 break;
 
             case TOKEN_OP_Bitshl:
-                fprintf(compiler->listingFile, "\t\tpop rax\n"
+                fprintf(compiler->listingFile, "\t\t; <<\n"
+                                               "\t\tpop rax\n"
                                                "\t\tmov rcx, 1000\n"
                                                "\t\tidiv rcx\n"
                                                "\t\tmov rcx, rax\n"
@@ -270,13 +295,15 @@ int Compiler_ExpressionListing(struct Compiler *compiler, struct Tree_Node *expr
 
             case TOKEN_OP_Add:
                 if (expressionNode->left == NULL) {
-                    fprintf(compiler->listingFile, "\t\tpop rbx\n"
+                    fprintf(compiler->listingFile, "\t\t; unary +\n"
+                                                   "\t\tpop rbx\n"
                                                    "\t\tmov rax, 0\n"
                                                    "\t\tadd rax, rbx\n"
                                                    "\t\tpush rax\n");
                     break;
                 }
-                fprintf(compiler->listingFile, "\t\tpop rbx\n"
+                fprintf(compiler->listingFile, "\t\t; +\n"
+                                               "\t\tpop rbx\n"
                                                "\t\tpop rax\n"
                                                "\t\tadd rax, rbx\n"
                                                "\t\tpush rax\n");
@@ -284,20 +311,23 @@ int Compiler_ExpressionListing(struct Compiler *compiler, struct Tree_Node *expr
 
             case TOKEN_OP_Sub:
                 if (expressionNode->left == NULL) {
-                    fprintf(compiler->listingFile, "\t\tpop rbx\n"
+                    fprintf(compiler->listingFile, "\t\t; unary -\n"
+                                                   "\t\tpop rbx\n"
                                                    "\t\tmov rax, 0\n"
                                                    "\t\tsub rax, rbx\n"
                                                    "\t\tpush rax\n");
                     break;
                 }
-                fprintf(compiler->listingFile, "\t\tpop rbx\n"
+                fprintf(compiler->listingFile, "\t\t; -\n"
+                                               "\t\tpop rbx\n"
                                                "\t\tpop rax\n"
                                                "\t\tsub rax, rbx\n"
                                                "\t\tpush rax\n");
                 break;
 
             case TOKEN_OP_Mul:
-                fprintf(compiler->listingFile, "\t\tpop rbx\n"
+                fprintf(compiler->listingFile, "\t\t; *\n"
+                                               "\t\tpop rbx\n"
                                                "\t\tpop rax\n"
                                                "\t\timul rax, rbx\n"
                                                "\t\tmov rcx, 1000\n"
@@ -306,7 +336,8 @@ int Compiler_ExpressionListing(struct Compiler *compiler, struct Tree_Node *expr
                 break;
                 
             case TOKEN_OP_Div:
-                fprintf(compiler->listingFile, "\t\tpop rbx\n"
+                fprintf(compiler->listingFile, "\t\t; /\n"
+                                               "\t\tpop rbx\n"
                                                "\t\tpop rax\n"
                                                "\t\timul rax, 1000\n"
                                                "\t\tidiv rbx\n"
@@ -314,7 +345,8 @@ int Compiler_ExpressionListing(struct Compiler *compiler, struct Tree_Node *expr
                 break;
 
             case TOKEN_OP_Mod:
-                fprintf(compiler->listingFile, "\t\tpop rbx\n"
+                fprintf(compiler->listingFile, "\t\t; %%\n"
+                                               "\t\tpop rbx\n"
                                                "\t\tpop rax\n"
                                                "\t\tmov rcx, rax\n"
                                                "\t\timul rax, 1000\n"
@@ -327,7 +359,8 @@ int Compiler_ExpressionListing(struct Compiler *compiler, struct Tree_Node *expr
                 break;
 
             case TOKEN_OP_Lor:
-                fprintf(compiler->listingFile, "\t\tpop rbx\n"
+                fprintf(compiler->listingFile, "\t\t; ||\n"
+                                               "\t\tpop rbx\n"
                                                "\t\tpop rax\n"
                                                "\t\tcmp rax, 0\n"
                                                "\t\tjne .L%d\n"
@@ -345,7 +378,8 @@ int Compiler_ExpressionListing(struct Compiler *compiler, struct Tree_Node *expr
                 break;
 
             case TOKEN_OP_Land:
-                fprintf(compiler->listingFile, "\t\tpop rbx\n"
+                fprintf(compiler->listingFile, "\t\t; &&\n"
+                                               "\t\tpop rbx\n"
                                                "\t\tpop rax\n"
                                                "\t\tcmp rax, 0\n"
                                                "\t\tje .L%d\n"
@@ -362,7 +396,8 @@ int Compiler_ExpressionListing(struct Compiler *compiler, struct Tree_Node *expr
                 break;
 
             case TOKEN_OP_Equals:
-                fprintf(compiler->listingFile, "\t\tpop rbx\n"
+                fprintf(compiler->listingFile, "\t\t; ==\n"
+                                               "\t\tpop rbx\n"
                                                "\t\tpop rax\n"
                                                "\t\tcmp rax, rbx\n"
                                                "\t\tje .L%d\n"
@@ -377,7 +412,8 @@ int Compiler_ExpressionListing(struct Compiler *compiler, struct Tree_Node *expr
                 break;
 
             case TOKEN_OP_Nequals:
-                fprintf(compiler->listingFile, "\t\tpop rbx\n"
+                fprintf(compiler->listingFile, "\t\t; !=\n"
+                                               "\t\tpop rbx\n"
                                                "\t\tpop rax\n"
                                                "\t\tcmp rax, rbx\n"
                                                "\t\tjne .L%d\n"
@@ -392,7 +428,8 @@ int Compiler_ExpressionListing(struct Compiler *compiler, struct Tree_Node *expr
                 break;
 
             case TOKEN_OP_Less:
-                fprintf(compiler->listingFile, "\t\tpop rbx\n"
+                fprintf(compiler->listingFile, "\t\t; <\n"
+                                               "\t\tpop rbx\n"
                                                "\t\tpop rax\n"
                                                "\t\tcmp rax, rbx\n"
                                                "\t\tjl .L%d\n"
@@ -407,7 +444,8 @@ int Compiler_ExpressionListing(struct Compiler *compiler, struct Tree_Node *expr
                 break;
 
             case TOKEN_OP_Greater:
-                fprintf(compiler->listingFile, "\t\tpop rbx\n"
+                fprintf(compiler->listingFile, "\t\t; >\n"
+                                               "\t\tpop rbx\n"
                                                "\t\tpop rax\n"
                                                "\t\tcmp rax, rbx\n"
                                                "\t\tjg .L%d\n"
@@ -422,7 +460,8 @@ int Compiler_ExpressionListing(struct Compiler *compiler, struct Tree_Node *expr
                 break;
 
             case TOKEN_OP_Lesseq:
-                fprintf(compiler->listingFile, "\t\tpop rbx\n"
+                fprintf(compiler->listingFile, "\t\t; <=\n"
+                                               "\t\tpop rbx\n"
                                                "\t\tpop rax\n"
                                                "\t\tcmp rax, rbx\n"
                                                "\t\tjle .L%d\n"
@@ -437,7 +476,8 @@ int Compiler_ExpressionListing(struct Compiler *compiler, struct Tree_Node *expr
                 break;
 
             case TOKEN_OP_Greatereq:
-                fprintf(compiler->listingFile, "\t\tpop rbx\n"
+                fprintf(compiler->listingFile, "\t\t; >=\n"
+                                               "\t\tpop rbx\n"
                                                "\t\tpop rax\n"
                                                "\t\tcmp rax, rbx\n"
                                                "\t\tjge .L%d\n"
@@ -452,12 +492,17 @@ int Compiler_ExpressionListing(struct Compiler *compiler, struct Tree_Node *expr
                 break;
 
             case TOKEN_KW_Return:
-                fprintf(compiler->listingFile, "\t\tpop rax\n"
-                                               "\t\tret\n");
+                fprintf(compiler->listingFile, "\t\t; ret\n"
+                                               "\t\tpop rax\n"
+                                               "\t\tadd rsp, 8 * %d\n"
+                                               "\t\tpop rbp\n"
+                                               "\t\tret\n",
+                                               compiler->localVarAmount);
                 break;
 
             case TOKEN_OP_Assignment:
-                fprintf(compiler->listingFile, "\t\tpop rax\n"
+                fprintf(compiler->listingFile, "\t\t; =\n"
+                                               "\t\tpop rax\n"
                                                "\t\tpop rbx\n"
                                                "\t\tmov [rbp - 8 * %d], rax\n"
                                                "\t\tpush rax\n",
@@ -467,9 +512,10 @@ int Compiler_ExpressionListing(struct Compiler *compiler, struct Tree_Node *expr
                 break;
 
             case TOKEN_OP_FunctionCall:
+                fprintf(compiler->listingFile, "\t\t; %s call\n", expressionNode->left->token->identifier);
                 Compiler_FunctionArgsListing(compiler, expressionNode->right);
                 fprintf(compiler->listingFile, "\t\tcall %s\n", expressionNode->left->token->identifier);
-                fprintf(compiler->listingFile, "\t\tadd rsp, 8 * %d\n", Compiler_CountLocalVariables(compiler, expressionNode->right));
+                fprintf(compiler->listingFile, "\t\tadd rsp, 8 * %d\n", Compiler_CountArgumetsAmount(compiler, expressionNode->right));
                 fprintf(compiler->listingFile, "\t\tpush rax\n");
                 break;
 
@@ -480,10 +526,12 @@ int Compiler_ExpressionListing(struct Compiler *compiler, struct Tree_Node *expr
     }
     
     if (expressionNode->token->type == TOKEN_TYPE_Number) {
+        fprintf(compiler->listingFile, "\t\t; number\n");
         fprintf(compiler->listingFile, "\t\tpush qword %" PRId64 "\n", expressionNode->token->number);
     }
     
     if (expressionNode->token->type == TOKEN_TYPE_Identifier) {
+        fprintf(compiler->listingFile, "\t\t; %s\n", expressionNode->token->identifier);
         fprintf(compiler->listingFile, "\t\tpush qword [rbp - 8 * %d]\n", 
                                        compiler->identifiersList->data[HashTable_Find(compiler->identifiersList, 
                                                                                       expressionNode->token->identifier,
@@ -494,6 +542,24 @@ int Compiler_ExpressionListing(struct Compiler *compiler, struct Tree_Node *expr
         /* NOT IMPLEMENTED YET */
     }
     return 0;
+}
+
+int Compiler_CountArgumetsAmount(struct Compiler *compiler, struct Tree_Node *argsNode)
+{
+    if (compiler == NULL || argsNode == NULL) {
+        return 0;
+    }
+
+    int count = 0;
+    struct Tree_Node *currentNode = argsNode;
+
+    while (currentNode->token->type == TOKEN_TYPE_Operator && 
+           currentNode->token->operator == TOKEN_OP_Comma) {
+
+        count++;
+        currentNode = currentNode->left;
+    }
+    return count + 1;
 }
 
 int Compiler_FunctionArgsListing(struct Compiler *compiler, struct Tree_Node *functionNode)
@@ -521,13 +587,14 @@ int Compiler_FunctionListing(struct Compiler *compiler, struct Tree_Node *functi
         return 1;
     }
 
-    fprintf(compiler->listingFile, "%s:\n", functionNode->token->identifier);
-    Compiler_FunctionPreambleListing(compiler, functionNode);
+    fprintf(compiler->listingFile, "\n%s:\n", functionNode->token->identifier);
+    Compiler_FunctionPreambleListing(compiler);
     
     Compiler_FunctionParamsListing(compiler, functionNode->left);
     Compiler_MultilineOperatorListing(compiler, functionNode->right);
 
-    Compiler_FunctionPostambleListing(compiler, functionNode);
+    /* SEEMS IT'S NOT NECESSARY */
+    // Compiler_FunctionPostambleListing(compiler);
     return 0;
 }
 
@@ -536,38 +603,65 @@ int Compiler_FunctionParamsListing(struct Compiler *compiler, struct Tree_Node *
     if (compiler == NULL || functionNode == NULL) {
         return 1;
     }
-    
-    
+
+    int curParamsNumber = 0;
+    struct Tree_Node * currentNode = functionNode;
+
+    while (currentNode != NULL && currentNode->token->operator != TOKEN_KW_Void) {
+        compiler->localVarCount++;
+        curParamsNumber++;
+        fprintf(compiler->listingFile, "\t\t; %s\n", currentNode->left->token->identifier);
+        fprintf(compiler->listingFile, "\t\tmov rax, [rbp + 8 * %d]\n"
+                                       "\t\tmov qword [rbp - 8 * %d], rax\n", 
+                                       1 + curParamsNumber,
+                                       compiler->localVarCount);
+
+        HashTable_Insert(compiler->identifiersList, currentNode->left->token->identifier,
+                         compiler->currentScope,    compiler->localVarCount);
+        
+        currentNode = currentNode->right;
+    }
+
     return 0;    
 }
 
-int Compiler_FunctionPreambleListing(struct Compiler *compiler, struct Tree_Node *functionNode)
-{
-    if (compiler == NULL || functionNode == NULL) {
-        return 1;
-    }
-
-    int localVars = Compiler_CountLocalVariables(compiler, functionNode);
-    fprintf(compiler->listingFile, "\t\t; preamble\n"
-                                   "\t\tpush rbp\n"
-                                   "\t\tmov rbp, rsp\n"
-                                   "\t\tsub rsp, 8 * %d\n\n",
-                                   localVars);
-    return 0;
-}
-
-int Compiler_FunctionPostambleListing(struct Compiler *compiler, struct Tree_Node *functionNode)
+int Compiler_FunctionPreambleListing(struct Compiler *compiler)
 {
     if (compiler == NULL) {
         return 1;
     }
-    
-    int localVars = Compiler_CountLocalVariables(compiler, functionNode);
 
-    fprintf(compiler->listingFile, "\n\t\t; postamble\n");
+    fprintf(compiler->listingFile, "\t\t; preamble\n"
+                                   "\t\tpush rbp\n"
+                                   "\t\tmov rbp, rsp\n"
+                                   "\t\tsub rsp, 8 * %d\n",
+                                   compiler->localVarAmount);
+    return 0;
+}
+
+int Compiler_FunctionPostambleListing(struct Compiler *compiler)
+{
+    if (compiler == NULL) {
+        return 1;
+    }
+
+    fprintf(compiler->listingFile, "\t\t; postamble\n");
     fprintf(compiler->listingFile, "\t\tadd rsp, 8 * %d\n"
                                    "\t\tpop rbp\n"
-                                   "\t\tret\n\n",
-                                   localVars);
+                                   "\t\tret\n",
+                                   compiler->localVarAmount);
+    return 0;
+}
+
+int Compiler_CreateListingPostamble(struct Compiler *compiler)
+{
+    if (compiler == NULL) {
+        return 1;   
+    }
+
+    fprintf(compiler->listingFile, "\n"
+                                   "rnum:\n"
+                                   "");
+
     return 0;
 }
