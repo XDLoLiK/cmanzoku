@@ -19,6 +19,7 @@ struct Compiler {
 	struct HashTable *identifiersList;
 	char *currentScope;
 	int localVarCount;
+	int localVarAmount;
 };
 
 // Create/Delete
@@ -39,9 +40,11 @@ int Compiler_IfStatementListing(struct Compiler *compiler, struct Tree_Node *ifN
 int Compiler_FunctionParamsListing(struct Compiler *compiler, struct Tree_Node *functionNode);
 int Compiler_WhileStatementListing(struct Compiler *compiler, struct Tree_Node *whileNode);
 int Compiler_ExpressionListing(struct Compiler *compiler, struct Tree_Node *expressionNode);
+int Compiler_CountArgumetsAmount(struct Compiler *compiler, struct Tree_Node *argsNode);
 int Compiler_FunctionListing(struct Compiler *compiler, struct Tree_Node *functionNode);
-int Compiler_FunctionPreambleListing(struct Compiler *compiler, struct Tree_Node *functionNode);
-int Compiler_FunctionPostambleListing(struct Compiler *compiler, struct Tree_Node *functionNode);
+int Compiler_FunctionPreambleListing(struct Compiler *compiler);
+int Compiler_FunctionPostambleListing(struct Compiler *compiler);
+int Compiler_CreateListingPostamble(struct Compiler *compiler);
 
 // External
 void Man_PrintCompilerError(struct Compiler *compiler);
