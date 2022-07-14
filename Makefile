@@ -45,7 +45,7 @@ $(CC_OBJ) : $(BIN_DIR)/%.c.o : $(SRC_DIR)/%.c
 
 $(AS_OBJ) : $(BIN_DIR)/%.asm.o : $(SRC_DIR)/%.asm
 	@mkdir -p $(dir $@)
-	$(AS) -MD  льо0щ.-o $@ $< $(ASFLAGS)
+	$(AS) -MD -o $@ $< $(ASFLAGS)
 
 .PHONY: info clean
 
