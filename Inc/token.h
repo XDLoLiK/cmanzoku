@@ -7,6 +7,8 @@
 #include <stdbool.h>
 #include <string.h>
 
+#define MAX_IDENTIFIER_LENGTH 256
+
 enum Token_Type {
     TOKEN_TYPE_Endmarker   = 0,
     TOKEN_TYPE_Number      = 1,
@@ -17,6 +19,8 @@ enum Token_Type {
 
 enum Token_Code {
     TONEN_OP_NotAnOperator = 0,
+
+    // Operators start at 10 and do NOT surpass 100
     TOKEN_OP_Add           = 10,
     TOKEN_OP_Sub           = 11,
     TOKEN_OP_Mul           = 12,
@@ -67,6 +71,8 @@ enum Token_Code {
     TOKEN_OP_GetAddr       = 57,
     TOKEN_OP_AccessAddr    = 58,
     TOKEN_OP_Index         = 59,
+
+    // Keywords start at 100 (important)
     TOKEN_KW_If            = 100,
     TOKEN_KW_Else          = 101,
     TOKEN_KW_For           = 102,
@@ -94,6 +100,6 @@ struct Token {
 };
 
 bool IsKeyword(const char *tokenString, int keywordLength);
-enum Token_Code GetKeyword(const char *tokenString);
+enum Token_Code GetKeyword(const char *tokenString, int keywordLength);
 
 #endif // Man_TOKEN_H

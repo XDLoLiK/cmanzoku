@@ -4,29 +4,7 @@
 #include "Manzoku.h"
 #include "tokenizer.h"
 
-#define RAISE(error) {				\
-	parser->errorCode = error;		\
-	Man_PrintParserError(parser);   \
-}
-
-#define ADVANCE(par) {										\
-	par->currentToken = Tokenizer_GetNextToken(par->tok);	\
-	if (par->currentToken == NULL) {						\
-		RAISE(PARSER_ERR_TokenizerError);					\
-	}														\
-}
-
-#define REQUIRE_TYPE(t) {						\
-	if (parser->currentToken->type != t) {		\
-		RAISE(PARSER_ERR_WrongTokenType);		\
-	}											\
-}
-
-#define REQUIRE_OPERATOR(op) {					\
-	if (parser->currentToken->operator != op) {	\
-		RAISE(PARSER_ERR_WrongOperator);		\
-	}											\
-}
+#define RAISE(error) (__Parser_RaiseError(parser, error))
 
 enum Parser_Error {
 	PARSER_ERR_NoError                = 0,
@@ -50,6 +28,12 @@ struct Tree_Node *Parser_GetGrammar(struct Parser *parser);
 // Create/delete
 struct Parser *Parser_New(const char *fileName);
 struct Parser *Parser_Delete(struct Parser *parser);
+
+// Helper funcitons
+void __Parser_RaiseError(struct Parser *parser, enum Parser_Error error);
+void Parser_Advance(struct Parser *parser);
+void Parser_RequireOperator(struct Parser *parser, enum Token_Code operator);
+void Parser_RequireType(struct Parser *parser, enum Token_Type type);
 
 // Recursive descent
 struct Tree_Node *Parser_GetMultilineOperator(struct Parser *parser);

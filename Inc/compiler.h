@@ -17,7 +17,7 @@ struct Compiler {
 	struct Tree_Node *syntaxTree;
 	int labelCount;
 	struct HashTable *identifiersList;
-	char *currentScope;
+	char currentScope[MAX_IDENTIFIER_LENGTH];
 	int localVarCount;
 	int localVarAmount;
 };

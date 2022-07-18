@@ -3,6 +3,8 @@
 
 #include "Manzoku.h"
 
+#define CUR_SYMBOL (*tok->bufferCurrent)
+
 enum Tokenizer_Error {
     TOK_ERR_NoError                 = 0,
     TOK_ERR_UnsuccessfulAllocation  = 1,
