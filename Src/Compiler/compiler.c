@@ -9,8 +9,7 @@ struct Compiler *Compiler_New(const char *sourceName)
 
     compiler->executableName = calloc(strlen(sourceName) + 5, sizeof (char));
     compiler->listingName    = calloc(strlen(sourceName) + 5, sizeof (char));
-    compiler->currentScope   = calloc(64,                     sizeof (char));
-    if (compiler->executableName == NULL || compiler->listingName == NULL || compiler->currentScope == NULL) {
+    if (compiler->executableName == NULL || compiler->listingName == NULL) {
         compiler = Compiler_Delete(compiler);
         return NULL;
     }
@@ -27,7 +26,7 @@ struct Compiler *Compiler_New(const char *sourceName)
         return NULL;
     }
 
-    compiler->identifiersList = HashTable_New((1 << 16) + 1);
+    compiler->identifiersList = HashTable_New((1 << 16) + 1, MAX_IDENTIFIER_LENGTH, 32);
     if (compiler->identifiersList == NULL) {
         compiler = Compiler_Delete(compiler);
         return NULL;
@@ -62,7 +61,6 @@ struct Compiler *Compiler_Delete(struct Compiler *compiler)
     }
     free(compiler->listingName);    
     free(compiler->executableName);
-    free(compiler->currentScope);
     free(compiler);
     return NULL;
 }

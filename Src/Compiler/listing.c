@@ -75,14 +75,15 @@ int Compiler_VarDeclListing(struct Compiler *compiler, struct Tree_Node *varDecl
     struct Tree_Node *currentNode = varDeclNode;
     while (currentNode != NULL) {
         char *currentIdentifier = currentNode->left->left->token->identifier;
+        char uniqueIdentifier[MAX_IDENTIFIER_LENGTH << 1] = "";
+        strncpy(uniqueIdentifier, compiler->currentScope, MAX_IDENTIFIER_LENGTH);
+        strncat(uniqueIdentifier, currentIdentifier,      MAX_IDENTIFIER_LENGTH);
+
         compiler->localVarCount++;
         int variableOffset = compiler->localVarCount; 
 
-        HashTable_Insert(compiler->identifiersList, currentIdentifier,
-                         compiler->currentScope,    variableOffset);
-        
+        HashTable_Insert(compiler->identifiersList, uniqueIdentifier, &variableOffset);
         fprintf(compiler->listingFile, "\t\t; %s\n", currentIdentifier);
-
         Compiler_ExpressionListing(compiler, currentNode->left->right);
         fprintf(compiler->listingFile, "\t\tpop rax\n"
                                        "\t\tmov qword [rbp - 8 * %d], rax\n",
@@ -226,70 +227,70 @@ int Compiler_ExpressionListing(struct Compiler *compiler, struct Tree_Node *expr
             case TOKEN_OP_Bitor:
                 fprintf(compiler->listingFile, "\t\t; |\n"
                                                "\t\tpop rax\n"
-                                               "\t\tmov rcx, 1000\n"
+                                               "\t\tmov rcx, 100\n"
                                                "\t\tidiv rcx\n"
                                                "\t\tmov rbx, rax\n"
                                                "\t\tpop rax\n"
-                                               "\t\tmov rcx, 1000\n"
+                                               "\t\tmov rcx, 100\n"
                                                "\t\tidiv rcx\n"
                                                "\t\tor rax, rbx\n"
-                                               "\t\timul rax, 1000\n"
+                                               "\t\timul rax, 100\n"
                                                "\t\tpush rax\n");
                 break;
 
             case TOKEN_OP_Bitxor:
                 fprintf(compiler->listingFile, "\t\t; ^\n"
                                                "\t\tpop rax\n"
-                                               "\t\tmov rcx, 1000\n"
+                                               "\t\tmov rcx, 100\n"
                                                "\t\tidiv rcx\n"
                                                "\t\tmov rbx, rax\n"
                                                "\t\tpop rax\n"
-                                               "\t\tmov rcx, 1000\n"
+                                               "\t\tmov rcx, 100\n"
                                                "\t\tidiv rcx\n"
                                                "\t\txor rax, rbx\n"
-                                               "\t\timul rax, 1000\n"
+                                               "\t\timul rax, 100\n"
                                                "\t\tpush rax\n");
                 break;
 
             case TOKEN_OP_Bitand:
                 fprintf(compiler->listingFile, "\t\t; &\n"
                                                "\t\tpop rax\n"
-                                               "\t\tmov rcx, 1000\n"
+                                               "\t\tmov rcx, 100\n"
                                                "\t\tidiv rcx\n"
                                                "\t\tmov rbx, rax\n"
                                                "\t\tpop rax\n"
-                                               "\t\tmov rcx, 1000\n"
+                                               "\t\tmov rcx, 100\n"
                                                "\t\tidiv rcx\n"
                                                "\t\tand rax, rbx\n"
-                                               "\t\timul rax, 1000\n"
+                                               "\t\timul rax, 100\n"
                                                "\t\tpush rax\n");
                 break;
 
             case TOKEN_OP_Bitshr:
                 fprintf(compiler->listingFile, "\t\t; >>\n"
                                                "\t\tpop rax\n"
-                                               "\t\tmov rcx, 1000\n"
+                                               "\t\tmov rcx, 100\n"
                                                "\t\tidiv rcx\n"
                                                "\t\tmov rcx, rax\n"
                                                "\t\tpop rax\n"
-                                               "\t\tmov rcx, 1000\n"
+                                               "\t\tmov rcx, 100\n"
                                                "\t\tidiv rcx\n"
                                                "\t\tsar rax, cl\n"
-                                               "\t\timul rax, 1000\n"
+                                               "\t\timul rax, 100\n"
                                                "\t\tpush rax\n");
                 break;
 
             case TOKEN_OP_Bitshl:
                 fprintf(compiler->listingFile, "\t\t; <<\n"
                                                "\t\tpop rax\n"
-                                               "\t\tmov rcx, 1000\n"
+                                               "\t\tmov rcx, 100\n"
                                                "\t\tidiv rcx\n"
                                                "\t\tmov rcx, rax\n"
                                                "\t\tpop rax\n"
-                                               "\t\tmov rcx, 1000\n"
+                                               "\t\tmov rcx, 100\n"
                                                "\t\tidiv rcx\n"
                                                "\t\tsal rax, cl\n"
-                                               "\t\timul rax, 1000\n"
+                                               "\t\timul rax, 100\n"
                                                "\t\tpush rax\n");
                 break;
 
@@ -330,7 +331,7 @@ int Compiler_ExpressionListing(struct Compiler *compiler, struct Tree_Node *expr
                                                "\t\tpop rbx\n"
                                                "\t\tpop rax\n"
                                                "\t\timul rax, rbx\n"
-                                               "\t\tmov rcx, 1000\n"
+                                               "\t\tmov rcx, 100\n"
                                                "\t\tidiv rcx\n"
                                                "\t\tpush rax\n");
                 break;
@@ -339,7 +340,7 @@ int Compiler_ExpressionListing(struct Compiler *compiler, struct Tree_Node *expr
                 fprintf(compiler->listingFile, "\t\t; /\n"
                                                "\t\tpop rbx\n"
                                                "\t\tpop rax\n"
-                                               "\t\timul rax, 1000\n"
+                                               "\t\timul rax, 100\n"
                                                "\t\tidiv rbx\n"
                                                "\t\tpush rax\n");
                 break;
@@ -349,10 +350,10 @@ int Compiler_ExpressionListing(struct Compiler *compiler, struct Tree_Node *expr
                                                "\t\tpop rbx\n"
                                                "\t\tpop rax\n"
                                                "\t\tmov rcx, rax\n"
-                                               "\t\timul rax, 1000\n"
+                                               "\t\timul rax, 100\n"
                                                "\t\tidiv rbx\n"
                                                "\t\timul rax, rbx\n"
-                                               "\t\tmov rdx, 1000\n"
+                                               "\t\tmov rdx, 100\n"
                                                "\t\tidiv rdx\n"
                                                "\t\tsub rcx, rax\n"
                                                "\t\tpush rcx\n"); 
@@ -367,7 +368,7 @@ int Compiler_ExpressionListing(struct Compiler *compiler, struct Tree_Node *expr
                                                "\t\tcmp rbx, 0\n"
                                                "\t\tje .L%d\n"
                                                ".L%d:\n"
-                                               "\t\tpush qword 1000\n"
+                                               "\t\tpush qword 100\n"
                                                "\t\tjmp .L%d\n"
                                                ".L%d:\n"
                                                "\t\tpush qword 0\n"
@@ -385,7 +386,7 @@ int Compiler_ExpressionListing(struct Compiler *compiler, struct Tree_Node *expr
                                                "\t\tje .L%d\n"
                                                "\t\tcmp rbx, 0\n"
                                                "\t\tje .L%d\n"
-                                               "\t\tpush qword 1000\n"
+                                               "\t\tpush qword 100\n"
                                                "\t\tjmp .L%d\n"
                                                ".L%d:\n"
                                                "\t\tpush qword 0\n"
@@ -404,7 +405,7 @@ int Compiler_ExpressionListing(struct Compiler *compiler, struct Tree_Node *expr
                                                "\t\tpush qword 0\n"
                                                "\t\tjmp .L%d\n"
                                                ".L%d:\n"
-                                               "\t\tpush qword 1000\n"
+                                               "\t\tpush qword 100\n"
                                                ".L%d:\n",
                                                compiler->labelCount, compiler->labelCount + 1,
                                                compiler->labelCount, compiler->labelCount + 1);
@@ -420,7 +421,7 @@ int Compiler_ExpressionListing(struct Compiler *compiler, struct Tree_Node *expr
                                                "\t\tpush qword 0\n"
                                                "\t\tjmp .L%d\n"
                                                ".L%d:\n"
-                                               "\t\tpush qword 1000\n"
+                                               "\t\tpush qword 100\n"
                                                ".L%d:\n",
                                                compiler->labelCount, compiler->labelCount + 1,
                                                compiler->labelCount, compiler->labelCount + 1);
@@ -436,7 +437,7 @@ int Compiler_ExpressionListing(struct Compiler *compiler, struct Tree_Node *expr
                                                "\t\tpush qword 0\n"
                                                "\t\tjmp .L%d\n"
                                                ".L%d:\n"
-                                               "\t\tpush qword 1000\n"
+                                               "\t\tpush qword 100\n"
                                                ".L%d:\n",
                                                compiler->labelCount, compiler->labelCount + 1,
                                                compiler->labelCount, compiler->labelCount + 1);
@@ -452,7 +453,7 @@ int Compiler_ExpressionListing(struct Compiler *compiler, struct Tree_Node *expr
                                                "\t\tpush qword 0\n"
                                                "\t\tjmp .L%d\n"
                                                ".L%d:\n"
-                                               "\t\tpush qword 1000\n"
+                                               "\t\tpush qword 100\n"
                                                ".L%d:\n",
                                                compiler->labelCount, compiler->labelCount + 1,
                                                compiler->labelCount, compiler->labelCount + 1);
@@ -468,7 +469,7 @@ int Compiler_ExpressionListing(struct Compiler *compiler, struct Tree_Node *expr
                                                "\t\tpush qword 0\n"
                                                "\t\tjmp .L%d\n"
                                                ".L%d:\n"
-                                               "\t\tpush qword 1000\n"
+                                               "\t\tpush qword 100\n"
                                                ".L%d:\n",
                                                compiler->labelCount, compiler->labelCount + 1,
                                                compiler->labelCount, compiler->labelCount + 1);
@@ -484,7 +485,7 @@ int Compiler_ExpressionListing(struct Compiler *compiler, struct Tree_Node *expr
                                                "\t\tpush qword 0\n"
                                                "\t\tjmp .L%d\n"
                                                ".L%d:\n"
-                                               "\t\tpush qword 1000\n"
+                                               "\t\tpush qword 100\n"
                                                ".L%d:\n",
                                                compiler->labelCount, compiler->labelCount + 1,
                                                compiler->labelCount, compiler->labelCount + 1);
@@ -501,14 +502,17 @@ int Compiler_ExpressionListing(struct Compiler *compiler, struct Tree_Node *expr
                 break;
 
             case TOKEN_OP_Assignment:
+                char *currentIdentifier = expressionNode->left->token->identifier;
+                char uniqueIdentifier[MAX_IDENTIFIER_LENGTH << 1] = "";
+                strncpy(uniqueIdentifier, compiler->currentScope, MAX_IDENTIFIER_LENGTH);
+                strncat(uniqueIdentifier, currentIdentifier,      MAX_IDENTIFIER_LENGTH);
+
                 fprintf(compiler->listingFile, "\t\t; =\n"
                                                "\t\tpop rax\n"
                                                "\t\tpop rbx\n"
                                                "\t\tmov [rbp - 8 * %d], rax\n"
                                                "\t\tpush rax\n",
-                                               compiler->identifiersList->data[HashTable_Find(compiler->identifiersList, 
-                                                                                              expressionNode->left->token->identifier,
-                                                                                              compiler->currentScope)].value);
+                                               *(int *)HashTable_Find(compiler->identifiersList, uniqueIdentifier));
                 break;
 
             case TOKEN_OP_FunctionCall:
@@ -531,11 +535,14 @@ int Compiler_ExpressionListing(struct Compiler *compiler, struct Tree_Node *expr
     }
     
     if (expressionNode->token->type == TOKEN_TYPE_Identifier) {
+        char *currentIdentifier = expressionNode->token->identifier;
+        char uniqueIdentifier[MAX_IDENTIFIER_LENGTH << 1] = "";
+        strncpy(uniqueIdentifier, compiler->currentScope, MAX_IDENTIFIER_LENGTH);
+        strncat(uniqueIdentifier, currentIdentifier,      MAX_IDENTIFIER_LENGTH);
+
         fprintf(compiler->listingFile, "\t\t; %s\n", expressionNode->token->identifier);
         fprintf(compiler->listingFile, "\t\tpush qword [rbp - 8 * %d]\n", 
-                                       compiler->identifiersList->data[HashTable_Find(compiler->identifiersList, 
-                                                                                      expressionNode->token->identifier,
-                                                                                      compiler->currentScope)].value);
+                                       *(int *)HashTable_Find(compiler->identifiersList, uniqueIdentifier));
     }
     
     if (expressionNode->token->type == TOKEN_TYPE_String) {
@@ -616,8 +623,12 @@ int Compiler_FunctionParamsListing(struct Compiler *compiler, struct Tree_Node *
                                        1 + curParamsNumber,
                                        compiler->localVarCount);
 
-        HashTable_Insert(compiler->identifiersList, currentNode->left->token->identifier,
-                         compiler->currentScope,    compiler->localVarCount);
+        char *currentIdentifier = currentNode->left->token->identifier;
+        char uniqueIdentifier[MAX_IDENTIFIER_LENGTH << 1] = "";
+        strncpy(uniqueIdentifier, compiler->currentScope, MAX_IDENTIFIER_LENGTH);
+        strncat(uniqueIdentifier, currentIdentifier,      MAX_IDENTIFIER_LENGTH);
+
+        HashTable_Insert(compiler->identifiersList, uniqueIdentifier, &compiler->localVarCount);
         
         currentNode = currentNode->right;
     }
