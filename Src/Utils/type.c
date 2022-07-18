@@ -28,7 +28,7 @@ bool IsIdentifierStart(char symbol)
 	return false;
 }
 
-bool IsIdentifierSym(char symbol)
+bool IsIdentifierSymbol(char symbol)
 {
 	if (IsIdentifierStart(symbol) || IsDigit(symbol)) {
 		return true;
@@ -36,16 +36,15 @@ bool IsIdentifierSym(char symbol)
 	return false;
 }
 
-bool IsOperator(char symbol)
+bool IsOperatorSymbol(char symbol)
 {
 	if ((symbol == '*') || (symbol == '/') || (symbol == '+') || (symbol == '-') ||
 		(symbol == '(') || (symbol == ')') || (symbol == '[') || (symbol == ']') ||
 		(symbol == '{') || (symbol == '}') || (symbol == '<') || (symbol == '>') ||
 		(symbol == ';') || (symbol == ':') || (symbol == ',') || (symbol == '.') ||
 		(symbol == '^') || (symbol == '~') || (symbol == '|') || (symbol == '&') ||
-		(symbol == '=') || (symbol == '%') || (symbol == '$') || (symbol == '!') ||
-		(symbol == '\n')) {
-		return true;
+		(symbol == '=') || (symbol == '%') || (symbol == '$') || (symbol == '!')) {
+	  	return true;
 	}
 	return false;
 }
