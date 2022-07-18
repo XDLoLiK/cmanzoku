@@ -22,7 +22,7 @@ struct Tokenizer *Tokenizer_New(const char *fileName)
     tok->bufferCurrent = tok->bufferStart;
     tok->bufferEnd     = tok->bufferStart + fileSize;    
     tok->currentToken  = tok->bufferStart;
-    tok->currentLine = tok->bufferStart;
+    tok->currentLine   = tok->bufferStart;
 
     tok->errorCode  = TOK_ERR_NoError;
     tok->lineNumber = 1;
@@ -38,19 +38,19 @@ struct Token *Tokenizer_GetNextToken(struct Tokenizer *tok)
         return Tokenizer_RecognizeEndOfData(tok);
     }
 
-    if (IsDigit(*tok->bufferCurrent)) {
+    if (IsDigit(CUR_SYMBOL)) {
         return Tokenizer_RecognizeNumber(tok);
     }
 
-    if (IsIdentifierStart(*tok->bufferCurrent)) {
+    if (IsIdentifierStart(CUR_SYMBOL)) {
         return Tokenizer_RecognizeIdentifier(tok);
     }
 
-    if (IsOperator(*tok->bufferCurrent)) {
+    if (IsOperatorSymbol(CUR_SYMBOL)) {
         return Tokenizer_RecognizeOperator(tok);
     }
 
-    if (*tok->bufferCurrent == '\"') {
+    if (CUR_SYMBOL == '\"') {
         return Tokenizer_RecognizeString(tok);
     }
 
@@ -61,8 +61,8 @@ struct Token *Tokenizer_GetNextToken(struct Tokenizer *tok)
 void Tokenizer_RecognizeStartOfData(struct Tokenizer *tok)
 {
     while (tok->bufferCurrent < tok->bufferEnd) {
-        if (IsSpace(*tok->bufferCurrent)) {
-            if (*tok->bufferCurrent == '\n') {
+        if (IsSpace(CUR_SYMBOL)) {
+            if (CUR_SYMBOL == '\n') {
                 tok->lineNumber++;
                 tok->currentLine = tok->bufferCurrent + 1;
             }
@@ -70,7 +70,7 @@ void Tokenizer_RecognizeStartOfData(struct Tokenizer *tok)
             continue;
         }
     
-        if (*tok->bufferCurrent == '#') {
+        if (CUR_SYMBOL == '#') {
             Tokenizer_RecognizeCommentary(tok);
             continue;
         }
@@ -81,14 +81,14 @@ void Tokenizer_RecognizeStartOfData(struct Tokenizer *tok)
 
 void Tokenizer_RecognizeCommentary(struct Tokenizer *tok)
 {
-    if (*tok->bufferCurrent != '#') {
+    if (CUR_SYMBOL != '#') {
         tok->errorCode = TOK_ERR_ImpossibleState;
         return;
     }
     tok->bufferCurrent++;
 
     while (tok->bufferCurrent < tok->bufferEnd) {
-        if (*tok->bufferCurrent == '\n') {
+        if (CUR_SYMBOL == '\n') {
             tok->lineNumber++;
             tok->bufferCurrent++;
             tok->currentLine = tok->bufferCurrent;
@@ -115,7 +115,7 @@ struct Token *Tokenizer_RecognizeEndOfData(struct Tokenizer *tok)
 struct Token *Tokenizer_RecognizeIdentifier(struct Tokenizer *tok)
 {
     while (tok->bufferCurrent < tok->bufferEnd) {
-        if (!IsIdentifierSym(*tok->bufferCurrent)) {
+        if (!IsIdentifierSymbol(CUR_SYMBOL)) {
             return Tokenizer_NewIdentifier(tok, tok->currentToken, 
                                            tok->bufferCurrent - tok->currentToken);
         }
@@ -128,14 +128,14 @@ struct Token *Tokenizer_RecognizeIdentifier(struct Tokenizer *tok)
 
 struct Token *Tokenizer_RecognizeString(struct Tokenizer *tok)
 {
-    if (*tok->bufferCurrent != '\"') {
+    if (CUR_SYMBOL != '\"') {
         tok->errorCode = TOK_ERR_ImpossibleState;
         return NULL;
     }
     tok->bufferCurrent++;
 
     while (tok->bufferCurrent < tok->bufferEnd) {
-        if (*tok->bufferCurrent == '\"') {
+        if (CUR_SYMBOL == '\"') {
             if (*(tok->bufferCurrent - 1) == '\\') {
                 tok->bufferCurrent++;
                 continue;
@@ -145,7 +145,7 @@ struct Token *Tokenizer_RecognizeString(struct Tokenizer *tok)
                                        tok->bufferCurrent - tok->currentToken);
         }
 
-        if (*tok->bufferCurrent == '\n') {
+        if (CUR_SYMBOL == '\n') {
             tok->errorCode = TOK_ERR_AbruptEndOfString;
             return NULL;
         }
@@ -162,50 +162,7 @@ struct Token *Tokenizer_RecognizeOperator(struct Tokenizer *tok)
     char lookAheadOne = (tok->bufferCurrent + 1 < tok->bufferEnd) ? *(tok->bufferCurrent + 1) : '\0';
     char lookAheadTwo = (tok->bufferCurrent + 2 < tok->bufferEnd) ? *(tok->bufferCurrent + 2) : '\0';  
 
-    switch (*tok->bufferCurrent) {
-        case '*':  
-            tok->bufferCurrent++;
-            switch (lookAheadOne) {
-                case '*':
-                    tok->bufferCurrent++;
-                    switch (lookAheadTwo) {
-                        case '=': tok->bufferCurrent++;
-                                  return Tokenizer_NewOperator(tok, TOKEN_OP_PowEqual);
-                        default:  return Tokenizer_NewOperator(tok, TOKEN_OP_Pow);
-                    }
-                case '=': tok->bufferCurrent++;
-                          return Tokenizer_NewOperator(tok, TOKEN_OP_MulEqual);
-                default:  return Tokenizer_NewOperator(tok, TOKEN_OP_Mul);
-            }
-
-        case '/':
-            tok->bufferCurrent++;
-            switch (lookAheadOne) {
-                case '=': tok->bufferCurrent++;
-                          return Tokenizer_NewOperator(tok, TOKEN_OP_DivEqual);
-                default:  return Tokenizer_NewOperator(tok, TOKEN_OP_Div);
-            }
-
-        case '+':
-            tok->bufferCurrent++;
-            switch (lookAheadOne) {
-                case '+': tok->bufferCurrent++;
-                          return Tokenizer_NewOperator(tok, TOKEN_OP_Increment);
-                case '=': tok->bufferCurrent++;
-                          return Tokenizer_NewOperator(tok, TOKEN_OP_AddEqual);
-                default:  return Tokenizer_NewOperator(tok, TOKEN_OP_Add);
-            }
-
-        case '-':
-            tok->bufferCurrent++;
-            switch (lookAheadOne) {
-                case '-': tok->bufferCurrent++;
-                          return Tokenizer_NewOperator(tok, TOKEN_OP_Decrement);
-                case '=': tok->bufferCurrent++;
-                          return Tokenizer_NewOperator(tok, TOKEN_OP_SubEqual);
-                default:  return Tokenizer_NewOperator(tok, TOKEN_OP_Sub);
-            }
-
+    switch (CUR_SYMBOL) {
         case '(':
             tok->bufferCurrent++; 
             return Tokenizer_NewOperator(tok, TOKEN_OP_Lround);
@@ -230,44 +187,6 @@ struct Token *Tokenizer_RecognizeOperator(struct Tokenizer *tok)
             tok->bufferCurrent++; 
             return Tokenizer_NewOperator(tok, TOKEN_OP_Rcurly);
 
-        case '>':
-            tok->bufferCurrent++;
-            switch (lookAheadOne) {
-                case '>': 
-                    tok->bufferCurrent++;
-                    switch (lookAheadTwo) {
-                        case '=': tok->bufferCurrent++;
-                                  return Tokenizer_NewOperator(tok, TOKEN_OP_BitshrEqual);
-                        default:  return Tokenizer_NewOperator(tok, TOKEN_OP_Bitshr);
-                    }
-                case '=': tok->bufferCurrent++;
-                          return Tokenizer_NewOperator(tok, TOKEN_OP_Greatereq);
-                default:  return Tokenizer_NewOperator(tok, TOKEN_OP_Greater);
-            }
-
-        case '<':
-            tok->bufferCurrent++;
-            switch (lookAheadOne) {
-                case '<': 
-                    tok->bufferCurrent++;
-                    switch (lookAheadTwo) {
-                        case '=': tok->bufferCurrent++;
-                                  return Tokenizer_NewOperator(tok, TOKEN_OP_BitshlEqual);
-                        default:  return Tokenizer_NewOperator(tok, TOKEN_OP_Bitshl);
-                    }
-                case '=': tok->bufferCurrent++;
-                          return Tokenizer_NewOperator(tok, TOKEN_OP_Lesseq);
-                default:  return Tokenizer_NewOperator(tok, TOKEN_OP_Less);
-            }
-
-        case '=':
-            tok->bufferCurrent++;
-            switch (lookAheadOne) {
-                case '=': tok->bufferCurrent++;
-                          return Tokenizer_NewOperator(tok, TOKEN_OP_Equals);
-                default:  return Tokenizer_NewOperator(tok, TOKEN_OP_Assignment);
-            }
-
         case '.':  
             tok->bufferCurrent++;
             return Tokenizer_NewOperator(tok, TOKEN_OP_Dot);
@@ -275,50 +194,6 @@ struct Token *Tokenizer_RecognizeOperator(struct Tokenizer *tok)
         case ',': 
             tok->bufferCurrent++;
             return Tokenizer_NewOperator(tok, TOKEN_OP_Comma);
-
-        case '|':
-            tok->bufferCurrent++;
-            switch (lookAheadOne) {
-                case '|': tok->bufferCurrent++;
-                          return Tokenizer_NewOperator(tok, TOKEN_OP_Lor);
-                case '=': tok->bufferCurrent++;
-                          return Tokenizer_NewOperator(tok, TOKEN_OP_BitorEqual);
-                default:  return Tokenizer_NewOperator(tok, TOKEN_OP_Bitor);
-            }
-
-        case '&':
-            tok->bufferCurrent++;
-            switch (lookAheadOne) {
-                case '&': tok->bufferCurrent++;
-                          return Tokenizer_NewOperator(tok, TOKEN_OP_Land);
-                case '=': tok->bufferCurrent++;
-                          return Tokenizer_NewOperator(tok, TOKEN_OP_BitandEqual);
-                default:  return Tokenizer_NewOperator(tok, TOKEN_OP_Bitand);
-            }
-
-        case '~':
-            tok->bufferCurrent++;
-            switch (lookAheadOne) {
-                case '=': tok->bufferCurrent++;
-                          return Tokenizer_NewOperator(tok, TOKEN_OP_BitnotEqual);
-                default:  return Tokenizer_NewOperator(tok, TOKEN_OP_Bitnot);
-            }
-
-        case '^':
-            tok->bufferCurrent++;
-            switch (lookAheadOne) {
-                case '=': tok->bufferCurrent++;
-                          return Tokenizer_NewOperator(tok, TOKEN_OP_BitxorEqual);
-                default:  return Tokenizer_NewOperator(tok, TOKEN_OP_Bitxor);
-            }
-
-        case '%':
-            tok->bufferCurrent++;
-            switch (lookAheadOne) {
-                case '=': tok->bufferCurrent++;
-                          return Tokenizer_NewOperator(tok, TOKEN_OP_ModEqual);
-                default:  return Tokenizer_NewOperator(tok, TOKEN_OP_Mod);
-            }
 
         case ':':
             tok->bufferCurrent++;
@@ -328,12 +203,173 @@ struct Token *Tokenizer_RecognizeOperator(struct Tokenizer *tok)
             tok->bufferCurrent++;
             return Tokenizer_NewOperator(tok, TOKEN_OP_Semicolon);
 
+        case '/':
+            tok->bufferCurrent++;
+            switch (lookAheadOne) {
+                case '=': 
+                    tok->bufferCurrent++;
+                    return Tokenizer_NewOperator(tok, TOKEN_OP_DivEqual);
+                default:
+                    return Tokenizer_NewOperator(tok, TOKEN_OP_Div);
+            }
+
         case '!':
             tok->bufferCurrent++;
             switch (lookAheadOne) {
-                case '=': tok->bufferCurrent++;
-                          return Tokenizer_NewOperator(tok, TOKEN_OP_Nequals);
-                default:  return Tokenizer_NewOperator(tok, TOKEN_OP_Lnot);
+                case '=': 
+                    tok->bufferCurrent++;
+                    return Tokenizer_NewOperator(tok, TOKEN_OP_Nequals);
+                default:  
+                    return Tokenizer_NewOperator(tok, TOKEN_OP_Lnot);
+            }
+
+        case '=':
+            tok->bufferCurrent++;
+            switch (lookAheadOne) {
+                case '=': 
+                    tok->bufferCurrent++;
+                    return Tokenizer_NewOperator(tok, TOKEN_OP_Equals);
+                default:
+                    return Tokenizer_NewOperator(tok, TOKEN_OP_Assignment);
+            }
+
+        case '~':
+            tok->bufferCurrent++;
+            switch (lookAheadOne) {
+                case '=': 
+                    tok->bufferCurrent++;
+                    return Tokenizer_NewOperator(tok, TOKEN_OP_BitnotEqual);
+                default:  
+                    return Tokenizer_NewOperator(tok, TOKEN_OP_Bitnot);
+            }
+
+        case '^':
+            tok->bufferCurrent++;
+            switch (lookAheadOne) {
+                case '=':
+                    tok->bufferCurrent++;
+                    return Tokenizer_NewOperator(tok, TOKEN_OP_BitxorEqual);
+                default:
+                    return Tokenizer_NewOperator(tok, TOKEN_OP_Bitxor);
+            }
+
+        case '%':
+            tok->bufferCurrent++;
+            switch (lookAheadOne) {
+                case '=':
+                    tok->bufferCurrent++;
+                    return Tokenizer_NewOperator(tok, TOKEN_OP_ModEqual);
+                default:
+                    return Tokenizer_NewOperator(tok, TOKEN_OP_Mod);
+            }
+
+        case '-':
+            tok->bufferCurrent++;
+            switch (lookAheadOne) {
+                case '-': 
+                    tok->bufferCurrent++;
+                    return Tokenizer_NewOperator(tok, TOKEN_OP_Decrement);
+                case '=':
+                    tok->bufferCurrent++;
+                    return Tokenizer_NewOperator(tok, TOKEN_OP_SubEqual);
+                default:  
+                    return Tokenizer_NewOperator(tok, TOKEN_OP_Sub);
+            }
+
+        case '|':
+            tok->bufferCurrent++;
+            switch (lookAheadOne) {
+                case '|': 
+                    tok->bufferCurrent++;
+                    return Tokenizer_NewOperator(tok, TOKEN_OP_Lor);
+                case '=': 
+                    tok->bufferCurrent++;
+                    return Tokenizer_NewOperator(tok, TOKEN_OP_BitorEqual);
+                default:  
+                    return Tokenizer_NewOperator(tok, TOKEN_OP_Bitor);
+            }
+
+        case '&':
+            tok->bufferCurrent++;
+            switch (lookAheadOne) {
+                case '&': 
+                    tok->bufferCurrent++;
+                    return Tokenizer_NewOperator(tok, TOKEN_OP_Land);
+                case '=': 
+                    tok->bufferCurrent++;
+                    return Tokenizer_NewOperator(tok, TOKEN_OP_BitandEqual);
+                default:  
+                    return Tokenizer_NewOperator(tok, TOKEN_OP_Bitand);
+            }
+
+        case '+':
+            tok->bufferCurrent++;
+            switch (lookAheadOne) {
+                case '+': 
+                    tok->bufferCurrent++;
+                    return Tokenizer_NewOperator(tok, TOKEN_OP_Increment);
+                case '=': 
+                    tok->bufferCurrent++;
+                    return Tokenizer_NewOperator(tok, TOKEN_OP_AddEqual);
+                default:  
+                    return Tokenizer_NewOperator(tok, TOKEN_OP_Add);
+            }
+
+        case '>':
+            tok->bufferCurrent++;
+            switch (lookAheadOne) {
+                case '>': 
+                    tok->bufferCurrent++;
+                    switch (lookAheadTwo) {
+                        case '=': 
+                            tok->bufferCurrent++;
+                            return Tokenizer_NewOperator(tok, TOKEN_OP_BitshrEqual);
+                        default:  
+                            return Tokenizer_NewOperator(tok, TOKEN_OP_Bitshr);
+                    }
+                case '=': 
+                    tok->bufferCurrent++;
+                    return Tokenizer_NewOperator(tok, TOKEN_OP_Greatereq);
+                default:  
+                    return Tokenizer_NewOperator(tok, TOKEN_OP_Greater);
+            }
+
+        case '<':
+            tok->bufferCurrent++;
+            switch (lookAheadOne) {
+                case '<': 
+                    tok->bufferCurrent++;
+                    switch (lookAheadTwo) {
+                        case '=': 
+                            tok->bufferCurrent++;
+                            return Tokenizer_NewOperator(tok, TOKEN_OP_BitshlEqual);
+                        default:  
+                            return Tokenizer_NewOperator(tok, TOKEN_OP_Bitshl);
+                    }
+                case '=': 
+                    tok->bufferCurrent++;
+                    return Tokenizer_NewOperator(tok, TOKEN_OP_Lesseq);
+                default:  
+                    return Tokenizer_NewOperator(tok, TOKEN_OP_Less);
+            }
+
+        case '*':  
+            tok->bufferCurrent++;
+            switch (lookAheadOne) {
+                case '*':
+                    tok->bufferCurrent++;
+                    switch (lookAheadTwo) {
+                        case '=': 
+                            tok->bufferCurrent++;
+                            return Tokenizer_NewOperator(tok, TOKEN_OP_PowEqual);
+                        default:  
+                            return Tokenizer_NewOperator(tok, TOKEN_OP_Pow);
+                    }
+                case '=': 
+                    tok->bufferCurrent++;
+                    return Tokenizer_NewOperator(tok, TOKEN_OP_MulEqual);
+                default:  
+                    return Tokenizer_NewOperator(tok, TOKEN_OP_Mul);
             }
     }
 
@@ -344,19 +380,19 @@ struct Token *Tokenizer_RecognizeOperator(struct Tokenizer *tok)
 struct Token *Tokenizer_RecognizeNumber(struct Tokenizer *tok)
 {
     int64_t number = 0; 
-    while (tok->bufferCurrent < tok->bufferEnd && IsDigit(*tok->bufferCurrent)) {
+    while (tok->bufferCurrent < tok->bufferEnd && IsDigit(CUR_SYMBOL)) {
         number *= 10;
-        number += *tok->bufferCurrent - '0';
+        number += CUR_SYMBOL - '0';
         tok->bufferCurrent++;
     }
     number *= 100;
 
-    if (*tok->bufferCurrent == '.') {
+    if (CUR_SYMBOL == '.') {
         tok->bufferCurrent++;
         int multiplier = 10;
 
-        while (tok->bufferCurrent < tok->bufferEnd && IsDigit(*tok->bufferCurrent)) {
-            number += (*tok->bufferCurrent - '0') * multiplier;
+        while (tok->bufferCurrent < tok->bufferEnd && IsDigit(CUR_SYMBOL)) {
+            number += (CUR_SYMBOL - '0') * multiplier;
             multiplier /= 10;
             tok->bufferCurrent++;
         }
@@ -375,7 +411,7 @@ struct Token *Tokenizer_NewIdentifier(struct Tokenizer *tok, char *identifier, i
 
     if (IsKeyword(identifier, identifierLength)) {
         token->type = TOKEN_TYPE_Operator;
-        token->operator = GetKeyword(identifier);
+        token->operator = GetKeyword(identifier, identifierLength);
         return token;
     }
 
@@ -428,7 +464,7 @@ struct Token *Tokenizer_NewNumber(struct Tokenizer *tok, int64_t number)
         return token;
     }
     token->type = TOKEN_TYPE_Number;
-    token->number = number;
+    token->number = number; 
     return token;
 }
 
@@ -440,7 +476,9 @@ struct Tokenizer *Tokenizer_Delete(struct Tokenizer *tok)
     tok->lineNumber = 0;
     tok->errorCode  = TOK_ERR_NoError;
     
-    fclose(tok->file);
+    if (tok->file != NULL) {
+        fclose(tok->file);
+    }
     tok->file = NULL;
 
     free(tok->bufferStart);
