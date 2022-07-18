@@ -1,0 +1,25 @@
+func main(void)
+{
+	var num = 4.0;
+	factorial_recursive(num);
+	factorial_iterative(num);
+	ret 0;
+}
+
+func factorial_recursive(var num)
+{
+	if (num <= 1) {
+		ret 1;
+	}
+	ret num * factorial_recursive(num - 1);
+}
+
+func factorial_iterative(var num)
+{
+	var ans  = 1;
+	while (num > 1) {
+		ans = ans * num;
+		num = num - 1;
+	}
+	ret ans;
+}
