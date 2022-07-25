@@ -2,9 +2,9 @@ APPLICATION = $(notdir $(CURDIR))
 
 BUILD = debug
 
-SRC_DIR   = Src
-BIN_DIR   = Bin
-INC_DIR   = Inc
+SRC_DIR   = Source
+BIN_DIR   = Binary
+INC_DIR   = Include
 
 CXX = g++
 CXXFLAGS = -Wall -Wextra -no-pie -msse4.2 -mavx2 -I $(INC_DIR)
