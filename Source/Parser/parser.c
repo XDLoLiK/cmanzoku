@@ -466,210 +466,41 @@ struct Tree_Node *Parser_GetExpression(struct Parser *parser)
     return Parser_GetComma(parser);
 }
 
-struct Tree_Node *Parser_GetComma(struct Parser *parser)
-{
-    struct Tree_Node *newNode = Parser_GetAssignment(parser);
-
-    while (IsPrecedence15(parser->currentToken->operator)) {
-        struct Tree_Node *operator = Tree_NewNode(parser->currentToken);
-        Parser_Advance(parser);
-
-        struct Tree_Node *secondOperand = Parser_GetAssignment(parser);
-        operator->left  = newNode;
-        operator->right = secondOperand;
-        newNode = operator;
-    }
-
-    return newNode;
+#ifndef NEW_EXPRESSION_RULE
+#define NEW_EXPRESSION_RULE(rule, depends_on, precedence)                   \
+                                                                            \
+struct Tree_Node *Parser_Get##rule(struct Parser *parser)                   \
+{                                                                           \
+    struct Tree_Node *newNode = Parser_Get##depends_on(parser);             \
+                                                                            \
+    while (IsPrecedence##precedence(parser->currentToken->operator)) {      \
+        struct Tree_Node *operator = Tree_NewNode(parser->currentToken);    \
+        Parser_Advance(parser);                                             \
+                                                                            \
+        struct Tree_Node *secondOperand = Parser_Get##depends_on(parser);   \
+        operator->left  = newNode;                                          \
+        operator->right = secondOperand;                                    \
+        newNode = operator;                                                 \
+    }                                                                       \
+                                                                            \
+    return newNode;                                                         \
 }
 
-struct Tree_Node *Parser_GetAssignment(struct Parser *parser)
-{
-    struct Tree_Node *newNode = Parser_GetLogicalOr(parser);
-    
-    while (IsPrecedence14(parser->currentToken->operator)) {
+NEW_EXPRESSION_RULE(Comma,      Assignment, 15)
+NEW_EXPRESSION_RULE(Assignment, LogicalOr,  14)
+NEW_EXPRESSION_RULE(LogicalOr,  LogicalAnd, 13)
+NEW_EXPRESSION_RULE(LogicalAnd, BitOr,      12)
+NEW_EXPRESSION_RULE(BitOr,      BitXor,     11)
+NEW_EXPRESSION_RULE(BitXor,     BitAnd,     10)
+NEW_EXPRESSION_RULE(BitAnd,     Equality,    9)
+NEW_EXPRESSION_RULE(Equality,   Comparison,  8)
+NEW_EXPRESSION_RULE(Comparison, BitShift,    7)
+NEW_EXPRESSION_RULE(BitShift,   AddSub,      6)
+NEW_EXPRESSION_RULE(AddSub,     MulDivMod,   5)
+NEW_EXPRESSION_RULE(MulDivMod,  UnarySign,   4)
 
-        struct Tree_Node *operator = Tree_NewNode(parser->currentToken);
-        Parser_Advance(parser);
-
-        struct Tree_Node *secondOperand = Parser_GetLogicalOr(parser);
-        operator->left  = newNode;
-        operator->right = secondOperand;
-        newNode = operator;
-    }
-
-    return newNode;
-}
-
-struct Tree_Node *Parser_GetLogicalOr(struct Parser *parser)
-{
-    struct Tree_Node *newNode = Parser_GetLogicalAnd(parser);
-
-    while (IsPrecedence13(parser->currentToken->operator)) {
-        struct Tree_Node *operator = Tree_NewNode(parser->currentToken);
-        Parser_Advance(parser);
-
-        struct Tree_Node *secondOperand = Parser_GetLogicalAnd(parser);
-        operator->left  = newNode;
-        operator->right = secondOperand;
-        newNode = operator;
-    }
-
-    return newNode;
-}
-
-struct Tree_Node *Parser_GetLogicalAnd(struct Parser *parser)
-{
-    struct Tree_Node *newNode = Parser_GetBitOr(parser);
-
-    while (IsPrecedence12(parser->currentToken->operator)) {
-        struct Tree_Node *operator = Tree_NewNode(parser->currentToken);
-        Parser_Advance(parser);
-
-        struct Tree_Node *secondOperand = Parser_GetBitOr(parser);
-        operator->left  = newNode;
-        operator->right = secondOperand;
-        newNode = operator;
-    }
-
-    return newNode;
-}
-
-struct Tree_Node *Parser_GetBitOr(struct Parser *parser)
-{
-    struct Tree_Node *newNode = Parser_GetBitXor(parser);
-
-    while (IsPrecedence11(parser->currentToken->operator)) {
-        struct Tree_Node *operator = Tree_NewNode(parser->currentToken);
-        Parser_Advance(parser);
-
-        struct Tree_Node *secondOperand = Parser_GetBitXor(parser);
-        operator->left  = newNode;
-        operator->right = secondOperand;
-        newNode = operator;
-    }
-
-    return newNode;
-}
-
-struct Tree_Node *Parser_GetBitXor(struct Parser *parser)
-{
-    struct Tree_Node *newNode = Parser_GetBitAnd(parser);
-
-    while (IsPrecedence10(parser->currentToken->operator)) {
-        struct Tree_Node *operator = Tree_NewNode(parser->currentToken);
-        Parser_Advance(parser);
-
-        struct Tree_Node *secondOperand = Parser_GetBitAnd(parser);
-        operator->left  = newNode;
-        operator->right = secondOperand;
-        newNode = operator;
-    }
-
-    return newNode;
-}
-
-struct Tree_Node *Parser_GetBitAnd(struct Parser *parser)
-{
-    struct Tree_Node *newNode = Parser_GetEquality(parser);
-
-    while (IsPrecedence9(parser->currentToken->operator)) {
-        struct Tree_Node *operator = Tree_NewNode(parser->currentToken);
-        Parser_Advance(parser);
-
-        struct Tree_Node *secondOperand = Parser_GetEquality(parser);
-        operator->left  = newNode;
-        operator->right = secondOperand;
-        newNode = operator;
-    }
-
-    return newNode;
-}
-
-struct Tree_Node *Parser_GetEquality(struct Parser *parser)
-{
-    struct Tree_Node *newNode = Parser_GetComparison(parser);
-
-    while (IsPrecedence8(parser->currentToken->operator)) {
-        struct Tree_Node *operator = Tree_NewNode(parser->currentToken);
-        Parser_Advance(parser);
-
-        struct Tree_Node *secondOperand = Parser_GetComparison(parser);
-        operator->left  = newNode;
-        operator->right = secondOperand;
-        newNode = operator;
-    }
-
-    return newNode;
-}
-
-struct Tree_Node *Parser_GetComparison(struct Parser *parser)
-{
-    struct Tree_Node *newNode = Parser_GetBitShift(parser);
-
-    while (IsPrecedence7(parser->currentToken->operator)) {
-        struct Tree_Node *operator = Tree_NewNode(parser->currentToken);
-        Parser_Advance(parser);
-
-        struct Tree_Node *secondOperand = Parser_GetBitShift(parser);
-        operator->left  = newNode;
-        operator->right = secondOperand;
-        newNode = operator;
-    }
-
-    return newNode;
-}
-
-struct Tree_Node *Parser_GetBitShift(struct Parser *parser)
-{
-    struct Tree_Node *newNode = Parser_GetAddSub(parser);
-
-    while (IsPrecedence6(parser->currentToken->operator)) {
-        struct Tree_Node *operator = Tree_NewNode(parser->currentToken);
-        Parser_Advance(parser);
-
-        struct Tree_Node *secondOperand = Parser_GetAddSub(parser);
-        operator->left  = newNode;
-        operator->right = secondOperand;
-        newNode = operator;
-    }
-
-    return newNode;
-}
-
-struct Tree_Node *Parser_GetAddSub(struct Parser *parser)
-{
-    struct Tree_Node *newNode = Parser_GetMulDivMod(parser);
-
-    while (IsPrecedence5(parser->currentToken->operator)) {
-        struct Tree_Node *operator = Tree_NewNode(parser->currentToken);
-        Parser_Advance(parser);
-
-        struct Tree_Node *secondOperand = Parser_GetMulDivMod(parser);
-        operator->left  = newNode;
-        operator->right = secondOperand;
-        newNode = operator;
-    }
-
-    return newNode;
-}
-
-struct Tree_Node *Parser_GetMulDivMod(struct Parser *parser)
-{
-    struct Tree_Node *newNode = Parser_GetUnarySign(parser);
-
-    while (IsPrecedence4(parser->currentToken->operator)) {
-        struct Tree_Node *operator = Tree_NewNode(parser->currentToken);
-        Parser_Advance(parser);
-
-        struct Tree_Node *secondOperand = Parser_GetUnarySign(parser);
-        operator->left  = newNode;
-        operator->right = secondOperand;
-        newNode = operator;
-    }
-
-    return newNode;
-}
+#undef NEW_EXPRESSION_RULE
+#endif // NEW_EXPRESSION_RULE
 
 struct Tree_Node *Parser_GetUnarySign(struct Parser *parser)
 {
