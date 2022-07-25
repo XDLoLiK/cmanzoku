@@ -50,8 +50,9 @@ $(AS_OBJ) : $(BIN_DIR)/%.asm.o : $(SRC_DIR)/%.asm
 .PHONY: info clean
 
 info:
-	@echo "[*] Sources: ${SRC} ${ASM}"
-	@echo "[*] Objects: ${CC_OBJ} $(AS_OBJ)"
+	@echo [*] CC:      $(CC)
+	@echo [*] Sources: ${SRC} ${ASM}
+	@echo [*] Objects: ${CC_OBJ} $(AS_OBJ)
 
 clean:
 	rm -rf $(BIN_DIR)

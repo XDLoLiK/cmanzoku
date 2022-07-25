@@ -403,15 +403,14 @@ struct Token *Tokenizer_RecognizeNumber(struct Tokenizer *tok)
 
 struct Token *Tokenizer_NewIdentifier(struct Tokenizer *tok, char *identifier, int identifierLength)
 {
+    if (IsKeyword(identifier, identifierLength)) {
+        enum Token_Code operatorCode = GetKeyword(identifier, identifierLength);
+        return Tokenizer_NewOperator(tok, operatorCode);
+    }
+
     struct Token *token = calloc(1, sizeof (struct Token));
     if (token == NULL) {
         tok->errorCode = TOK_ERR_UnsuccessfulAllocation;
-        return token;
-    }
-
-    if (IsKeyword(identifier, identifierLength)) {
-        token->type = TOKEN_TYPE_Operator;
-        token->operator = GetKeyword(identifier, identifierLength);
         return token;
     }
 
@@ -423,6 +422,21 @@ struct Token *Tokenizer_NewIdentifier(struct Tokenizer *tok, char *identifier, i
         return NULL;
     }
     strncpy(token->identifier, identifier, identifierLength);
+
+    token->line = tok->lineNumber;
+    token->column = (int)(tok->currentToken  - tok->currentLine) + 1;
+    token->length = (int)(tok->bufferCurrent - tok->currentToken);
+
+    int lineLength = (int)(strchr(tok->currentLine, '\n') - tok->currentLine);
+    token->context = calloc(lineLength + 1, sizeof (char));
+    if (token->context == NULL) {
+        tok->errorCode = TOK_ERR_UnsuccessfulAllocation;
+        free(token->identifier);
+        free(token);
+        return NULL;
+    }
+    strncpy(token->context, tok->currentLine, lineLength);
+
     return token;
 }
 
@@ -441,6 +455,21 @@ struct Token *Tokenizer_NewString(struct Tokenizer *tok, char *string, int strin
         return NULL;
     }
     strncpy(token->string, string, stringLength);
+
+    token->line = tok->lineNumber;
+    token->column = (int)(tok->currentToken  - tok->currentLine) + 1;
+    token->length = (int)(tok->bufferCurrent - tok->currentToken);
+
+    int lineLength = (int)(strchr(tok->currentLine, '\n') - tok->currentLine);
+    token->context = calloc(lineLength + 1, sizeof (char));
+    if (token->context == NULL) {
+        tok->errorCode = TOK_ERR_UnsuccessfulAllocation;
+        free(token->string);
+        free(token);
+        return NULL;
+    }
+    strncpy(token->context, tok->currentLine, lineLength);
+
     return token;
 }
 
@@ -453,6 +482,20 @@ struct Token *Tokenizer_NewOperator(struct Tokenizer *tok, enum Token_Code code)
     }
     token->type = TOKEN_TYPE_Operator;
     token->operator = code;
+    
+    token->line = tok->lineNumber;
+    token->column = (int)(tok->currentToken  - tok->currentLine) + 1;
+    token->length = (int)(tok->bufferCurrent - tok->currentToken);
+
+    int lineLength = (int)(strchr(tok->currentLine, '\n') - tok->currentLine);
+    token->context = calloc(lineLength + 1, sizeof (char));
+    if (token->context == NULL) {
+        tok->errorCode = TOK_ERR_UnsuccessfulAllocation;
+        free(token);
+        return NULL;
+    }
+    strncpy(token->context, tok->currentLine, lineLength);
+
     return token;
 }
 
@@ -464,7 +507,21 @@ struct Token *Tokenizer_NewNumber(struct Tokenizer *tok, int64_t number)
         return token;
     }
     token->type = TOKEN_TYPE_Number;
-    token->number = number; 
+    token->number = number;
+
+    token->line = tok->lineNumber;
+    token->column = (int)(tok->currentToken  - tok->currentLine) + 1;
+    token->length = (int)(tok->bufferCurrent - tok->currentToken);
+
+    int lineLength = (int)(strchr(tok->currentLine, '\n') - tok->currentLine);
+    token->context = calloc(lineLength + 1, sizeof (char));
+    if (token->context == NULL) {
+        tok->errorCode = TOK_ERR_UnsuccessfulAllocation;
+        free(token);
+        return NULL;
+    }
+    strncpy(token->context, tok->currentLine, lineLength);
+
     return token;
 }
 

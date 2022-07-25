@@ -8,13 +8,13 @@ size_t GetFileSize(FILE *file)
 	return fileSize;
 }
 
-char const *GetFileExtension(char const *fileName)
+char *GetFileExtension(char *fileName)
 {
 	if (fileName == NULL) {
 		return fileName;
 	}
 
-	const char *dot = strrchr(fileName, '.');
+	char *dot = strrchr(fileName, '.');
     if (dot == NULL || dot == fileName) {
     	return NULL;
     }

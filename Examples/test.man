@@ -1,6 +1,6 @@
 func main(void)
 {
-	var num = 4.0;
+	var num = 5.0;
 	factorial_recursive(num);
 	factorial_iterative(num);
 	ret 0;

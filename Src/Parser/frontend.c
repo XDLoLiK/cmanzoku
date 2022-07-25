@@ -1,5 +1,7 @@
 #include "parser.h"
 
+#define DEBUG_ON
+
 int Frontend_Main(const char *fileName)
 {
 	struct Parser *parser = Parser_New(fileName);
@@ -12,18 +14,23 @@ int Frontend_Main(const char *fileName)
 		return 1;
 	}
 
-	char *treeFileName = calloc(strlen(fileName) + 6, sizeof (char));
+	char *treeFileName = calloc(strlen(fileName) + 10, sizeof (char));
 	if (treeFileName == NULL) {
 		return 1;
 	}
 	strcpy(treeFileName, fileName);
-	strcat(treeFileName, ".tree");
+	strcat(treeFileName, ".tree.txt");
 	
 	FILE *treeFile = fopen(treeFileName, "w");
 	if (treeFile == NULL) {
+		free(treeFileName);
 		return 1;
 	}
 	Tree_Upload(syntaxTreeRoot, treeFile, 0);
+
+#ifdef DEBUG_ON
+	Tree_CreateGraph(syntaxTreeRoot, fileName);
+#endif
 
 	free(treeFileName);	
 	fclose(treeFile);
@@ -78,7 +85,7 @@ int Frontend_DumpTokens(const char *fileName)
 
 		currentToken = Tokenizer_GetNextToken(tok);
 		if (currentToken == NULL) {
-			Man_PrintTokError(tok);
+			Man_PrintError(currentToken, "");
 		}
 	}
 	fprintf(tokenFile, "END\n");

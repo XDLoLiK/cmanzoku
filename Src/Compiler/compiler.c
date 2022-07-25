@@ -26,7 +26,7 @@ struct Compiler *Compiler_New(const char *sourceName)
         return NULL;
     }
 
-    compiler->identifiersList = HashTable_New((1 << 16) + 1, MAX_IDENTIFIER_LENGTH, 32);
+    compiler->identifiersList = HashTable_New((1 << 16) + 1, MAX_IDENTIFIER_LENGTH << 1, 32);
     if (compiler->identifiersList == NULL) {
         compiler = Compiler_Delete(compiler);
         return NULL;

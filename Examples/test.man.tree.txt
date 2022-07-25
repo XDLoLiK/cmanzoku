@@ -1,0 +1,773 @@
+{
+	new
+	type: 4
+	value: 107
+	line: 1
+	column: 1
+	context: func main(void)
+	{
+		new
+		type: 3
+		value: main
+		line: 1
+		column: 6
+		context: func main(void)
+		{
+			new
+			type: 4
+			value: 108
+			line: 1
+			column: 11
+			context: func main(void)
+			{
+				nil
+			}
+			{
+				nil
+			}
+		}
+		{
+			new
+			type: 4
+			value: 32
+			line: 3
+			column: 15
+			context: 	var num = 5.0;
+			{
+				new
+				type: 4
+				value: 113
+				line: 3
+				column: 2
+				context: 	var num = 5.0;
+				{
+					new
+					type: 4
+					value: 21
+					line: 3
+					column: 10
+					context: 	var num = 5.0;
+					{
+						new
+						type: 3
+						value: num
+						line: 3
+						column: 6
+						context: 	var num = 5.0;
+						{
+							nil
+						}
+						{
+							nil
+						}
+					}
+					{
+						new
+						type: 1
+						value: 500
+						line: 3
+						column: 12
+						context: 	var num = 5.0;
+						{
+							nil
+						}
+						{
+							nil
+						}
+					}
+				}
+				{
+					nil
+				}
+			}
+			{
+				new
+				type: 4
+				value: 32
+				line: 4
+				column: 26
+				context: 	factorial_recursive(num);
+				{
+					new
+					type: 4
+					value: 56
+					line: 0
+					column: 0
+					context: (null)
+					{
+						new
+						type: 3
+						value: factorial_recursive
+						line: 4
+						column: 2
+						context: 	factorial_recursive(num);
+						{
+							nil
+						}
+						{
+							nil
+						}
+					}
+					{
+						new
+						type: 3
+						value: num
+						line: 4
+						column: 22
+						context: 	factorial_recursive(num);
+						{
+							nil
+						}
+						{
+							nil
+						}
+					}
+				}
+				{
+					new
+					type: 4
+					value: 32
+					line: 5
+					column: 26
+					context: 	factorial_iterative(num);
+					{
+						new
+						type: 4
+						value: 56
+						line: 0
+						column: 0
+						context: (null)
+						{
+							new
+							type: 3
+							value: factorial_iterative
+							line: 5
+							column: 2
+							context: 	factorial_iterative(num);
+							{
+								nil
+							}
+							{
+								nil
+							}
+						}
+						{
+							new
+							type: 3
+							value: num
+							line: 5
+							column: 22
+							context: 	factorial_iterative(num);
+							{
+								nil
+							}
+							{
+								nil
+							}
+						}
+					}
+					{
+						new
+						type: 4
+						value: 32
+						line: 6
+						column: 7
+						context: 	ret 0;
+						{
+							new
+							type: 4
+							value: 104
+							line: 6
+							column: 2
+							context: 	ret 0;
+							{
+								new
+								type: 1
+								value: 0
+								line: 6
+								column: 6
+								context: 	ret 0;
+								{
+									nil
+								}
+								{
+									nil
+								}
+							}
+							{
+								nil
+							}
+						}
+						{
+							nil
+						}
+					}
+				}
+			}
+		}
+	}
+	{
+		new
+		type: 4
+		value: 107
+		line: 9
+		column: 1
+		context: func factorial_recursive(var num)
+		{
+			new
+			type: 3
+			value: factorial_recursive
+			line: 9
+			column: 6
+			context: func factorial_recursive(var num)
+			{
+				new
+				type: 4
+				value: 113
+				line: 9
+				column: 26
+				context: func factorial_recursive(var num)
+				{
+					new
+					type: 3
+					value: num
+					line: 9
+					column: 30
+					context: func factorial_recursive(var num)
+					{
+						nil
+					}
+					{
+						nil
+					}
+				}
+				{
+					nil
+				}
+			}
+			{
+				new
+				type: 4
+				value: 32
+				line: 0
+				column: 0
+				context: (null)
+				{
+					new
+					type: 4
+					value: 100
+					line: 11
+					column: 2
+					context: 	if (num <= 1) {
+					{
+						new
+						type: 4
+						value: 30
+						line: 11
+						column: 10
+						context: 	if (num <= 1) {
+						{
+							new
+							type: 3
+							value: num
+							line: 11
+							column: 6
+							context: 	if (num <= 1) {
+							{
+								nil
+							}
+							{
+								nil
+							}
+						}
+						{
+							new
+							type: 1
+							value: 100
+							line: 11
+							column: 13
+							context: 	if (num <= 1) {
+							{
+								nil
+							}
+							{
+								nil
+							}
+						}
+					}
+					{
+						new
+						type: 4
+						value: 32
+						line: 12
+						column: 8
+						context: 		ret 1;
+						{
+							new
+							type: 4
+							value: 104
+							line: 12
+							column: 3
+							context: 		ret 1;
+							{
+								new
+								type: 1
+								value: 100
+								line: 12
+								column: 7
+								context: 		ret 1;
+								{
+									nil
+								}
+								{
+									nil
+								}
+							}
+							{
+								nil
+							}
+						}
+						{
+							nil
+						}
+					}
+				}
+				{
+					new
+					type: 4
+					value: 32
+					line: 14
+					column: 40
+					context: 	ret num * factorial_recursive(num - 1);
+					{
+						new
+						type: 4
+						value: 104
+						line: 14
+						column: 2
+						context: 	ret num * factorial_recursive(num - 1);
+						{
+							new
+							type: 4
+							value: 12
+							line: 14
+							column: 10
+							context: 	ret num * factorial_recursive(num - 1);
+							{
+								new
+								type: 3
+								value: num
+								line: 14
+								column: 6
+								context: 	ret num * factorial_recursive(num - 1);
+								{
+									nil
+								}
+								{
+									nil
+								}
+							}
+							{
+								new
+								type: 4
+								value: 56
+								line: 0
+								column: 0
+								context: (null)
+								{
+									new
+									type: 3
+									value: factorial_recursive
+									line: 14
+									column: 12
+									context: 	ret num * factorial_recursive(num - 1);
+									{
+										nil
+									}
+									{
+										nil
+									}
+								}
+								{
+									new
+									type: 4
+									value: 11
+									line: 14
+									column: 36
+									context: 	ret num * factorial_recursive(num - 1);
+									{
+										new
+										type: 3
+										value: num
+										line: 14
+										column: 32
+										context: 	ret num * factorial_recursive(num - 1);
+										{
+											nil
+										}
+										{
+											nil
+										}
+									}
+									{
+										new
+										type: 1
+										value: 100
+										line: 14
+										column: 38
+										context: 	ret num * factorial_recursive(num - 1);
+										{
+											nil
+										}
+										{
+											nil
+										}
+									}
+								}
+							}
+						}
+						{
+							nil
+						}
+					}
+					{
+						nil
+					}
+				}
+			}
+		}
+		{
+			new
+			type: 4
+			value: 107
+			line: 17
+			column: 1
+			context: func factorial_iterative(var num)
+			{
+				new
+				type: 3
+				value: factorial_iterative
+				line: 17
+				column: 6
+				context: func factorial_iterative(var num)
+				{
+					new
+					type: 4
+					value: 113
+					line: 17
+					column: 26
+					context: func factorial_iterative(var num)
+					{
+						new
+						type: 3
+						value: num
+						line: 17
+						column: 30
+						context: func factorial_iterative(var num)
+						{
+							nil
+						}
+						{
+							nil
+						}
+					}
+					{
+						nil
+					}
+				}
+				{
+					new
+					type: 4
+					value: 32
+					line: 19
+					column: 14
+					context: 	var ans  = 1;
+					{
+						new
+						type: 4
+						value: 113
+						line: 19
+						column: 2
+						context: 	var ans  = 1;
+						{
+							new
+							type: 4
+							value: 21
+							line: 19
+							column: 11
+							context: 	var ans  = 1;
+							{
+								new
+								type: 3
+								value: ans
+								line: 19
+								column: 6
+								context: 	var ans  = 1;
+								{
+									nil
+								}
+								{
+									nil
+								}
+							}
+							{
+								new
+								type: 1
+								value: 100
+								line: 19
+								column: 13
+								context: 	var ans  = 1;
+								{
+									nil
+								}
+								{
+									nil
+								}
+							}
+						}
+						{
+							nil
+						}
+					}
+					{
+						new
+						type: 4
+						value: 32
+						line: 0
+						column: 0
+						context: (null)
+						{
+							new
+							type: 4
+							value: 103
+							line: 20
+							column: 2
+							context: 	while (num > 1) {
+							{
+								new
+								type: 4
+								value: 28
+								line: 20
+								column: 13
+								context: 	while (num > 1) {
+								{
+									new
+									type: 3
+									value: num
+									line: 20
+									column: 9
+									context: 	while (num > 1) {
+									{
+										nil
+									}
+									{
+										nil
+									}
+								}
+								{
+									new
+									type: 1
+									value: 100
+									line: 20
+									column: 15
+									context: 	while (num > 1) {
+									{
+										nil
+									}
+									{
+										nil
+									}
+								}
+							}
+							{
+								new
+								type: 4
+								value: 32
+								line: 21
+								column: 18
+								context: 		ans = ans * num;
+								{
+									new
+									type: 4
+									value: 21
+									line: 21
+									column: 7
+									context: 		ans = ans * num;
+									{
+										new
+										type: 3
+										value: ans
+										line: 21
+										column: 3
+										context: 		ans = ans * num;
+										{
+											nil
+										}
+										{
+											nil
+										}
+									}
+									{
+										new
+										type: 4
+										value: 12
+										line: 21
+										column: 13
+										context: 		ans = ans * num;
+										{
+											new
+											type: 3
+											value: ans
+											line: 21
+											column: 9
+											context: 		ans = ans * num;
+											{
+												nil
+											}
+											{
+												nil
+											}
+										}
+										{
+											new
+											type: 3
+											value: num
+											line: 21
+											column: 15
+											context: 		ans = ans * num;
+											{
+												nil
+											}
+											{
+												nil
+											}
+										}
+									}
+								}
+								{
+									new
+									type: 4
+									value: 32
+									line: 22
+									column: 16
+									context: 		num = num - 1;
+									{
+										new
+										type: 4
+										value: 21
+										line: 22
+										column: 7
+										context: 		num = num - 1;
+										{
+											new
+											type: 3
+											value: num
+											line: 22
+											column: 3
+											context: 		num = num - 1;
+											{
+												nil
+											}
+											{
+												nil
+											}
+										}
+										{
+											new
+											type: 4
+											value: 11
+											line: 22
+											column: 13
+											context: 		num = num - 1;
+											{
+												new
+												type: 3
+												value: num
+												line: 22
+												column: 9
+												context: 		num = num - 1;
+												{
+													nil
+												}
+												{
+													nil
+												}
+											}
+											{
+												new
+												type: 1
+												value: 100
+												line: 22
+												column: 15
+												context: 		num = num - 1;
+												{
+													nil
+												}
+												{
+													nil
+												}
+											}
+										}
+									}
+									{
+										nil
+									}
+								}
+							}
+						}
+						{
+							new
+							type: 4
+							value: 32
+							line: 24
+							column: 9
+							context: 	ret ans;
+							{
+								new
+								type: 4
+								value: 104
+								line: 24
+								column: 2
+								context: 	ret ans;
+								{
+									new
+									type: 3
+									value: ans
+									line: 24
+									column: 6
+									context: 	ret ans;
+									{
+										nil
+									}
+									{
+										nil
+									}
+								}
+								{
+									nil
+								}
+							}
+							{
+								nil
+							}
+						}
+					}
+				}
+			}
+			{
+				new
+				type: 0
+				value: 0
+				line: 0
+				column: 0
+				context: (null)
+				{
+					nil
+				}
+				{
+					nil
+				}
+			}
+		}
+	}
+}

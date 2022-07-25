@@ -49,7 +49,16 @@ void Tree_Upload(struct Tree_Node *root, FILE *file, int depth)
 				fprintf(file, "value: %d\n", root->token->operator);
 				break;
 		}
+
+		PRINT_N_TABS(depth + 1);
+		fprintf(file, "line: %d\n", root->token->line);
+
+		PRINT_N_TABS(depth + 1);
+		fprintf(file, "column: %d\n", root->token->column);
 		
+		PRINT_N_TABS(depth + 1);
+		fprintf(file, "context: %s\n", root->token->context);
+
 		Tree_Upload(root->left,  file, depth + 1);
 		Tree_Upload(root->right, file, depth + 1);
 	}
@@ -66,16 +75,14 @@ struct Tree_Node *Tree_Download(FILE *file)
 
 	fscanf(file, "%1s", formatCheck);
 	if (strcmp(formatCheck, "{") != 0) {
-		fprintf(stderr, "\033[0;31m" "ERROR:" "\033[0m" "Invalid AST format\n");
-		exit(0);
+		Man_PrintError(NULL, "Invalid AST format\n");
 	}
 
-	fscanf(file, "%8s", contentsCheck);
+	fscanf(file, "%4s", contentsCheck);
 	if (strcmp(contentsCheck, "nil") == 0) {
 		fscanf(file, "%1s", formatCheck);
 		if (strcmp(formatCheck, "}") != 0) {
-			fprintf(stderr, "\033[0;31m" "ERROR:" "\033[0m" "Invalid AST format\n");
-			exit(0);
+			Man_PrintError(NULL, "Invalid AST format\n");
 		}
 		return NULL;
 	}
@@ -110,14 +117,19 @@ struct Tree_Node *Tree_Download(FILE *file)
 			break;
 	}
 
+	fscanf(file, " line: %d", &token->line);
+	fscanf(file, " column: %d", &token->column);
+
+	token->context = calloc(512, sizeof (char));
+	fscanf(file, " context: %512[^\n]",  token->context);
+
 	struct Tree_Node *root = Tree_NewNode(token);
 	root->left  = Tree_Download(file);
 	root->right = Tree_Download(file);
 
 	fscanf(file, "%1s", formatCheck);
 	if (strcmp(formatCheck, "}") != 0) {
-		fprintf(stderr, "\033[0;31m" "ERROR:" "\033[0m" "Invalid AST format\n");
-		exit(0);
+		Man_PrintError(NULL, "Invalid AST format\n");
 	}
 	return root;
 }
@@ -129,6 +141,15 @@ struct Tree_Node *Tree_Delete(struct Tree_Node *root)
 	}
 	root->left  = Tree_Delete(root->left);
 	root->right = Tree_Delete(root->right);
+
+	if (root->token->type == TOKEN_TYPE_String) {
+		free(root->token->string);
+	}
+	if (root->token->type == TOKEN_TYPE_Identifier) {
+		free(root->token->identifier);
+	}
+
+	free(root->token->context);
 	free(root->token);
 	free(root);
 	return NULL;

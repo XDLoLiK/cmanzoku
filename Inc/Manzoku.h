@@ -12,10 +12,13 @@
 
 // general
 #include "token.h"
+#include "stdfunc.h"
+#include "manerrors.h"
 
 // data structures
 #include "Structures/hashtable.h"
 #include "Structures/tree.h"
+#include "Structures/graph.h"
 
 // utilites
 #include "Utils/file.h"

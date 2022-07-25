@@ -6,7 +6,7 @@
 bool IsDigit(char symbol);
 bool IsSpace(char symbol);
 bool IsIdentifierStart(char symbol);
-bool IsIdentifierSym(char symbol);
-bool IsOperator(char symbol);
+bool IsIdentifierSymbol(char symbol);
+bool IsOperatorSymbol(char symbol);
 
 #endif // Man_TYPE_H

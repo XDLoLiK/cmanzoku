@@ -64,7 +64,4 @@ struct Tree_Node *Parser_GetString(struct Parser *parser);
 struct Tree_Node *Parser_GetNumber(struct Parser *parser);
 struct Tree_Node *Parser_GetIdentifier(struct Parser *parser);
 
-// External
-void Man_PrintParserError(struct Parser *parser);
-
 #endif // Man_PARSER_H

@@ -7,7 +7,7 @@ void __Parser_RaiseError(struct Parser *parser, enum Parser_Error error)
     }
     
     parser->errorCode = error;
-    Man_PrintParserError(parser);
+    Man_PrintError(parser->currentToken, "Parser Error");
     return;
 }
 
@@ -80,7 +80,7 @@ struct Tree_Node *Parser_GetGrammar(struct Parser *parser)
     }
 
     switch (parser->currentToken->operator) {
-        case TOKEN_KW_Function: 
+        case TOKEN_KW_Function:
             syntaxTree = Parser_GetFunction(parser);
             break;
 
@@ -95,6 +95,7 @@ struct Tree_Node *Parser_GetGrammar(struct Parser *parser)
     }
 
     struct Tree_Node *lastLine = syntaxTree;
+
     while (parser->currentToken->type != TOKEN_TYPE_Endmarker) {
         if (parser->currentToken->type != TOKEN_TYPE_Operator) {
             RAISE(PARSER_ERR_WrongTokenType);
@@ -141,10 +142,8 @@ struct Tree_Node *Parser_GetVarDecl(struct Parser *parser)
     declNode->left = assignmentNode;
 
     struct Tree_Node *currentNode = declNode;
-    while (parser->currentToken->type == TOKEN_TYPE_Operator &&
-           parser->currentToken->operator == TOKEN_OP_Comma) {
-
-        Parser_Advance(parser);
+    while (parser->currentToken->type == TOKEN_TYPE_Operator && parser->currentToken->operator == TOKEN_OP_Comma) {
+        Parser_Advance(parser); 
         Parser_RequireOperator(parser, TOKEN_KW_VarDecl);
         struct Tree_Node *nextDeclNode = Tree_NewNode(parser->currentToken);
         Parser_Advance(parser);
@@ -186,9 +185,7 @@ struct Tree_Node *Parser_GetFunction(struct Parser *parser)
     Parser_Advance(parser);
     functionName->left = functionParams;
 
-    if (parser->currentToken->type == TOKEN_TYPE_Operator &&
-        parser-> currentToken->operator == TOKEN_OP_Semicolon) {
-        
+    if (parser->currentToken->type == TOKEN_TYPE_Operator && parser-> currentToken->operator == TOKEN_OP_Semicolon) {
         functionName->right = Tree_NewNode(parser->currentToken);
         Parser_Advance(parser);
         return functionNode;
@@ -198,8 +195,8 @@ struct Tree_Node *Parser_GetFunction(struct Parser *parser)
     Parser_Advance(parser);
     struct Tree_Node *functionBody = Parser_GetMultilineOperator(parser);
     struct Tree_Node *lastLine = functionBody;
-    while (!(parser->currentToken->type     == TOKEN_TYPE_Operator && 
-             parser->currentToken->operator == TOKEN_OP_Rcurly)) {
+
+    while (!(parser->currentToken->type     == TOKEN_TYPE_Operator && parser->currentToken->operator == TOKEN_OP_Rcurly)) {
         lastLine->right = Parser_GetMultilineOperator(parser);
         lastLine = lastLine->right;
     }
@@ -231,9 +228,7 @@ struct Tree_Node *Parser_GetParametersList(struct Parser *parser)
     declNode->left = varNode;
 
     struct Tree_Node *currentNode = declNode;
-    while (parser->currentToken->type == TOKEN_TYPE_Operator &&
-           parser->currentToken->operator == TOKEN_OP_Comma) {
-
+    while (parser->currentToken->type == TOKEN_TYPE_Operator && parser->currentToken->operator == TOKEN_OP_Comma) {
         Parser_Advance(parser);
         Parser_RequireOperator(parser, TOKEN_KW_VarDecl);
         struct Tree_Node *nextDeclNode = Tree_NewNode(parser->currentToken);
@@ -323,8 +318,8 @@ struct Tree_Node *Parser_GetIf(struct Parser *parser)
     Parser_Advance(parser);
     struct Tree_Node *ifBody = Parser_GetMultilineOperator(parser);
     struct Tree_Node *lastLine = ifBody;
-    while (!(parser->currentToken->type     == TOKEN_TYPE_Operator && 
-             parser->currentToken->operator == TOKEN_OP_Rcurly)) {
+
+    while (!(parser->currentToken->type     == TOKEN_TYPE_Operator && parser->currentToken->operator == TOKEN_OP_Rcurly)) {
         lastLine->right = Parser_GetMultilineOperator(parser);
         lastLine = lastLine->right;
     }
@@ -351,8 +346,8 @@ struct Tree_Node *Parser_GetIf(struct Parser *parser)
         Parser_Advance(parser);
         struct Tree_Node *elseBody = Parser_GetMultilineOperator(parser);
         struct Tree_Node *lastLine = elseBody;
-        while (!(parser->currentToken->type     == TOKEN_TYPE_Operator && 
-                 parser->currentToken->operator == TOKEN_OP_Rcurly)) {
+
+        while (!(parser->currentToken->type     == TOKEN_TYPE_Operator && parser->currentToken->operator == TOKEN_OP_Rcurly)) {
             lastLine->right = Parser_GetMultilineOperator(parser);
             lastLine = lastLine->right;
         }
@@ -401,8 +396,8 @@ struct Tree_Node *Parser_GetFor(struct Parser *parser)
     Parser_Advance(parser);
     struct Tree_Node *forBody = Parser_GetMultilineOperator(parser);
     struct Tree_Node *lastLine = forBody;
-    while (!(parser->currentToken->type     == TOKEN_TYPE_Operator && 
-             parser->currentToken->operator == TOKEN_OP_Rcurly)) {
+
+    while (!(parser->currentToken->type     == TOKEN_TYPE_Operator && parser->currentToken->operator == TOKEN_OP_Rcurly)) {
         lastLine->right = Parser_GetMultilineOperator(parser);
         lastLine = lastLine->right;
     }
@@ -429,8 +424,8 @@ struct Tree_Node *Parser_GetWhile(struct Parser *parser)
     Parser_Advance(parser);
     struct Tree_Node *whileBody = Parser_GetMultilineOperator(parser);
     struct Tree_Node *lastLine = whileBody;
-    while (!(parser->currentToken->type     == TOKEN_TYPE_Operator && 
-             parser->currentToken->operator == TOKEN_OP_Rcurly)) {
+    
+    while (!(parser->currentToken->type     == TOKEN_TYPE_Operator && parser->currentToken->operator == TOKEN_OP_Rcurly)) {
         lastLine->right = Parser_GetMultilineOperator(parser);
         lastLine = lastLine->right;
     }

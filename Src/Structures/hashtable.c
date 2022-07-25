@@ -142,7 +142,7 @@ struct HashTable *HashTable_Delete(struct HashTable *ht)
         return ht;
     }
     
-    if (ht->data != NULL && ht->state != NULL) {
+    if (ht->data != NULL) {
         for (size_t i = 0; i < ht->capacity; ++i) {
             free(ht->data[i].key);
             free(ht->data[i].value);

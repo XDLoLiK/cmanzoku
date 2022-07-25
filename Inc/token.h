@@ -90,6 +90,7 @@ enum Token_Code {
 };
 
 struct Token {
+    // type and value
     enum Token_Type type;
     union {
         enum Token_Code operator;
@@ -97,6 +98,12 @@ struct Token {
         char *string;
         char *identifier;
     };
+
+    // debug info
+    char *context;
+    int line;
+    int column;
+    int length;
 };
 
 bool IsKeyword(const char *tokenString, int keywordLength);

@@ -46,9 +46,6 @@ int Compiler_FunctionPreambleListing(struct Compiler *compiler);
 int Compiler_FunctionPostambleListing(struct Compiler *compiler);
 int Compiler_CreateListingPostamble(struct Compiler *compiler);
 
-// External
-void Man_PrintCompilerError(struct Compiler *compiler);
-
 /* NOT IMPLEMENTED YET */
 int Compiler_ForStatementListing(struct Compiler *compiler, struct Tree_Node *forNode);
 

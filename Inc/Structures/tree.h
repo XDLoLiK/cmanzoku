@@ -1,6 +1,7 @@
 #ifndef Man_TREE_H
 #define Man_TREE_H
 
+#include "manerrors.h"
 #include "token.h"
 
 #include <stdio.h>

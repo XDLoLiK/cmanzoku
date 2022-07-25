@@ -6,7 +6,7 @@ int Compiler_CreateListing(struct Compiler *compiler, struct Tree_Node *syntaxTr
     Compiler_GrammarListing(compiler, syntaxTree);
 
     if (compiler->errorCode != COMPILER_ERR_NoError) {
-        Man_PrintCompilerError(compiler);
+        Man_PrintError(NULL, "Compiler Error");
     }
     return 0;
 }

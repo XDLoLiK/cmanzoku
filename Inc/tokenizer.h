@@ -52,7 +52,4 @@ struct Token *Tokenizer_NewString(struct Tokenizer *tok, char *string, int strin
 struct Token *Tokenizer_NewOperator(struct Tokenizer *tok, enum Token_Code code);
 struct Token *Tokenizer_NewNumber(struct Tokenizer *tok, int64_t number);
 
-// External
-void Man_PrintTokError(struct Tokenizer *tok);
-
 #endif // TOKENIZER_H
