@@ -2,7 +2,7 @@
 
 void __Parser_RaiseError(struct Parser *parser, enum Parser_Error error)
 {
-    if (parser == NULL) {
+    if (parser == NULL || error == PARSER_ERR_NoError) {
         return;
     }
     
@@ -499,7 +499,7 @@ NEW_EXPRESSION_RULE(BitShift,   AddSub,      6)
 NEW_EXPRESSION_RULE(AddSub,     MulDivMod,   5)
 NEW_EXPRESSION_RULE(MulDivMod,  UnarySign,   4)
 
-#undef NEW_EXPRESSION_RULE
+#undef    NEW_EXPRESSION_RULE
 #endif // NEW_EXPRESSION_RULE
 
 struct Tree_Node *Parser_GetUnarySign(struct Parser *parser)

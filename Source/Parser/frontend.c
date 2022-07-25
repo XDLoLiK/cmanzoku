@@ -1,7 +1,5 @@
 #include "parser.h"
 
-#define DEBUG_ON
-
 int Frontend_Main(const char *fileName)
 {
 	struct Parser *parser = Parser_New(fileName);
@@ -26,11 +24,16 @@ int Frontend_Main(const char *fileName)
 		free(treeFileName);
 		return 1;
 	}
+
+#ifdef OPTIMIZATION_ON
+	Tree_Optimize(&syntaxTreeRoot);
+#endif // OPTIMIZATION_ON
+
 	Tree_Upload(syntaxTreeRoot, treeFile, 0);
 
 #ifdef DEBUG_ON
 	Tree_CreateGraph(syntaxTreeRoot, fileName);
-#endif
+#endif // DEBUG_ON
 
 	free(treeFileName);	
 	fclose(treeFile);

@@ -107,9 +107,6 @@ factorial_recursive:
 		pop rbp
 		ret
 		add rsp, 8 * 1
-		; number
-		push qword 400
-		add rsp, 8 * 1
 
 factorial_iterative:
 		; preamble

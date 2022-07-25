@@ -1,0 +1,27 @@
+digraph tree {
+	rankdir=HR;
+	node [shape=record];
+	node0xd135a0 [color=red, label="<left> left | { OPERATOR | func } | <right> right"];
+	node0xd13630 [color=green, label="<left> left | { IDENTIFIER | main } | <right> right"];
+	node0xd136f0 [color=red, label="<left> left | { OPERATOR | void } | <right> right"];
+	node0xd13630:left -> node0xd136f0;
+	node0xd13f30 [color=red, label="<left> left | { OPERATOR | ; } | <right> right"];
+	node0xd13810 [color=red, label="<left> left | { OPERATOR | var } | <right> right"];
+	node0xd13930 [color=red, label="<left> left | { OPERATOR | = } | <right> right"];
+	node0xd138b0 [color=green, label="<left> left | { IDENTIFIER | x } | <right> right"];
+	node0xd13930:left -> node0xd138b0;
+	node0xd139b0 [color=blue, label="<left> left | { NUMBER | 500 } | <right> right"];
+	node0xd13930:right -> node0xd139b0;
+	node0xd13810:left -> node0xd13930;
+	node0xd13f30:left -> node0xd13810;
+	node0xd140a0 [color=red, label="<left> left | { OPERATOR | ; } | <right> right"];
+	node0xd13fa0 [color=red, label="<left> left | { OPERATOR | ret } | <right> right"];
+	node0xd14030 [color=green, label="<left> left | { IDENTIFIER | x } | <right> right"];
+	node0xd13fa0:left -> node0xd14030;
+	node0xd140a0:left -> node0xd13fa0;
+	node0xd13f30:right -> node0xd140a0;
+	node0xd13630:right -> node0xd13f30;
+	node0xd135a0:left -> node0xd13630;
+	node0xd14140 [color=yellow, label="<left> left | { END | 0 } | <right> right"];
+	node0xd135a0:right -> node0xd14140;
+}

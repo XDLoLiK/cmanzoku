@@ -1,0 +1,135 @@
+{
+	new
+	type: 4
+	value: 107
+	line: 1
+	column: 1
+	context: func main(void)
+	{
+		new
+		type: 3
+		value: main
+		line: 1
+		column: 6
+		context: func main(void)
+		{
+			new
+			type: 4
+			value: 108
+			line: 1
+			column: 11
+			context: func main(void)
+			{
+				nil
+			}
+			{
+				nil
+			}
+		}
+		{
+			new
+			type: 4
+			value: 41
+			line: 3
+			column: 31
+			context: 	var x = 5 / 1 * 1 * 0 + 0 - 0;
+			{
+				new
+				type: 4
+				value: 113
+				line: 3
+				column: 2
+				context: 	var x = 5 / 1 * 1 * 0 + 0 - 0;
+				{
+					new
+					type: 4
+					value: 27
+					line: 3
+					column: 8
+					context: 	var x = 5 / 1 * 1 * 0 + 0 - 0;
+					{
+						new
+						type: 3
+						value: x
+						line: 3
+						column: 6
+						context: 	var x = 5 / 1 * 1 * 0 + 0 - 0;
+						{
+							nil
+						}
+						{
+							nil
+						}
+					}
+					{
+						new
+						type: 1
+						value: 500
+						line: 3
+						column: 10
+						context: 	var x = 5 / 1 * 1 * 0 + 0 - 0;
+						{
+							nil
+						}
+						{
+							nil
+						}
+					}
+				}
+				{
+					nil
+				}
+			}
+			{
+				new
+				type: 4
+				value: 41
+				line: 4
+				column: 7
+				context: 	ret x;	
+				{
+					new
+					type: 4
+					value: 104
+					line: 4
+					column: 2
+					context: 	ret x;	
+					{
+						new
+						type: 3
+						value: x
+						line: 4
+						column: 6
+						context: 	ret x;	
+						{
+							nil
+						}
+						{
+							nil
+						}
+					}
+					{
+						nil
+					}
+				}
+				{
+					nil
+				}
+			}
+		}
+	}
+	{
+		new
+		type: 0
+		value: 0
+		line: 0
+		column: 0
+		context: (null)
+		{
+			nil
+		}
+		{
+			nil
+		}
+	}
+}

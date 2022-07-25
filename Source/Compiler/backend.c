@@ -2,12 +2,12 @@
 
 int Backend_Main(const char *fileName)
 {
-	char *treeFileName = calloc(strlen(fileName) + 6, sizeof (char));
+	char *treeFileName = calloc(strlen(fileName) + 10, sizeof (char));
 	if (treeFileName == NULL) {
 		return 1;
 	}
 	strcpy(treeFileName, fileName);
-	strcat(treeFileName, ".tree");
+	strcat(treeFileName, ".tree.txt");
 
 	FILE *treeFile = fopen(treeFileName, "r");
 	if (treeFile == NULL) {
