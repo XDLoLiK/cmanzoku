@@ -14,91 +14,91 @@ enum Token_Type {
     TOKEN_TYPE_Number      = 1,
     TOKEN_TYPE_String      = 2,
     TOKEN_TYPE_Identifier  = 3,
-    TOKEN_TYPE_Operator    = 4
+    TOKEN_TYPE_Operator    = 4,
 };
 
 enum Token_Code {
-    // Operators start at 10 and do NOT surpass 100
+    // Operators start at 0 and do NOT surpass 100
     TONEN_OP_NotAnOperator = 0,
 
     // Precedence 1
-    TOKEN_OP_Dot           = 34,
-    TOKEN_OP_FunctionCall  = 53,
-    TOKEN_OP_Indexate      = 54,
+    TOKEN_OP_Dot           = 1,
+    TOKEN_OP_FunctionCall  = 2,
+    TOKEN_OP_Indexate      = 3,
 
     // Precedence 2
-    TOKEN_OP_GetAddr       = 55,
-    TOKEN_OP_AccessAddr    = 56,
-    TOKEN_OP_Bitnot        = 18,
-    TOKEN_OP_Lnot          = 24,
+    TOKEN_OP_GetAddr       = 4,
+    TOKEN_OP_AccessAddr    = 5,
+    TOKEN_OP_Bitnot        = 6,
+    TOKEN_OP_Lnot          = 7,
 
     // Precedence 3
-    TOKEN_OP_Pow           = 35,
+    TOKEN_OP_Pow           = 8,
 
     // Precedence 4
-    TOKEN_OP_Mul           = 12,
-    TOKEN_OP_Div           = 13,
-    TOKEN_OP_Mod           = 14,
+    TOKEN_OP_Mul           = 9,
+    TOKEN_OP_Div           = 10,
+    TOKEN_OP_Mod           = 11,
 
     // Precedence 5 
-    TOKEN_OP_Add           = 10,
-    TOKEN_OP_Sub           = 11,
+    TOKEN_OP_Add           = 12,
+    TOKEN_OP_Sub           = 13,
 
     // Precedence 6
-    TOKEN_OP_Bitshl        = 19,
-    TOKEN_OP_Bitshr        = 20,
+    TOKEN_OP_Bitshl        = 14,
+    TOKEN_OP_Bitshr        = 15,
 
     // Precedence 7
-    TOKEN_OP_Less          = 27,
-    TOKEN_OP_Greater       = 28,
-    TOKEN_OP_Greatereq     = 29,
-    TOKEN_OP_Lesseq        = 30,
+    TOKEN_OP_Less          = 16,
+    TOKEN_OP_Greater       = 17,
+    TOKEN_OP_Greatereq     = 18,
+    TOKEN_OP_Lesseq        = 19,
 
     // Precedence 8
-    TOKEN_OP_Equals        = 25,
-    TOKEN_OP_Nequals       = 26,
+    TOKEN_OP_Equals        = 20,
+    TOKEN_OP_Nequals       = 21,
 
     // Precedence 9
-    TOKEN_OP_Bitand        = 16,
+    TOKEN_OP_Bitand        = 22,
 
     // Precedence 10
-    TOKEN_OP_Bitxor        = 17,
+    TOKEN_OP_Bitxor        = 23,
 
     // Precedence 11
-    TOKEN_OP_Bitor         = 15,
+    TOKEN_OP_Bitor         = 24,
 
     // Precedence 12
-    TOKEN_OP_Land          = 23,
+    TOKEN_OP_Land          = 25,
 
     // Precedence 13
-    TOKEN_OP_Lor           = 22,
+    TOKEN_OP_Lor           = 26,
     
     // Precedence 14
-    TOKEN_OP_Assignment    = 21,
-    TOKEN_OP_AddEqual      = 42,
-    TOKEN_OP_SubEqual      = 43,
-    TOKEN_OP_MulEqual      = 44,
-    TOKEN_OP_DivEqual      = 45,
-    TOKEN_OP_ModEqual      = 46,
-    TOKEN_OP_BitorEqual    = 47,
-    TOKEN_OP_BitandEqual   = 48,
-    TOKEN_OP_BitxorEqual   = 49,
-    TOKEN_OP_BitshlEqual   = 50,
-    TOKEN_OP_BitshrEqual   = 51,
-    TOKEN_OP_PowEqual      = 52,
+    TOKEN_OP_Assignment    = 27,
+    TOKEN_OP_AddEqual      = 28,
+    TOKEN_OP_SubEqual      = 29,
+    TOKEN_OP_MulEqual      = 30,
+    TOKEN_OP_DivEqual      = 31,
+    TOKEN_OP_ModEqual      = 32,
+    TOKEN_OP_BitorEqual    = 33,
+    TOKEN_OP_BitandEqual   = 34,
+    TOKEN_OP_BitxorEqual   = 35,
+    TOKEN_OP_BitshlEqual   = 36,
+    TOKEN_OP_BitshrEqual   = 37,
+    TOKEN_OP_PowEqual      = 38,
 
     // Precedence 15
-    TOKEN_OP_Comma         = 33,
+    TOKEN_OP_Comma         = 39,
 
     // Extra
-    TOKEN_OP_Colon         = 31,
-    TOKEN_OP_Semicolon     = 32,
-    TOKEN_OP_Lsquare       = 36,
-    TOKEN_OP_Rsquare       = 37,
-    TOKEN_OP_Lround        = 38,
-    TOKEN_OP_Rround        = 39,
-    TOKEN_OP_Lcurly        = 40,
-    TOKEN_OP_Rcurly        = 41,
+    TOKEN_OP_Colon         = 40,
+    TOKEN_OP_Semicolon     = 41,
+    TOKEN_OP_Lsquare       = 42,
+    TOKEN_OP_Rsquare       = 43,
+    TOKEN_OP_Lround        = 44,
+    TOKEN_OP_Rround        = 45,
+    TOKEN_OP_Lcurly        = 46,
+    TOKEN_OP_Rcurly        = 47,
 
     // Keywords start at 100 (important)
     TOKEN_KW_If            = 100,

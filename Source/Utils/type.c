@@ -48,3 +48,78 @@ bool IsOperatorSymbol(char symbol)
 	}
 	return false;
 }
+
+inline bool IsPrecedence1(int operator)
+{
+	return (operator >= 1 && operator <= 3);
+}
+
+inline bool IsPrecedence2(int operator)
+{
+	return (operator >= 4 && operator <= 7);
+}
+
+inline bool IsPrecedence3(int operator)
+{
+	return (operator == 8);
+}
+
+inline bool IsPrecedence4(int operator)
+{
+	return (operator >= 9 && operator <= 11);
+}
+
+inline bool IsPrecedence5(int operator)
+{
+	return (operator >= 12 && operator <= 13);
+}
+
+inline bool IsPrecedence6(int operator)
+{
+	return (operator >= 14 && operator <= 15);
+}
+
+inline bool IsPrecedence7(int operator)
+{
+	return (operator >= 16 && operator <= 19);
+}
+
+inline bool IsPrecedence8(int operator)
+{
+	return (operator >= 20 && operator <= 21);
+}
+
+inline bool IsPrecedence9(int operator)
+{
+	return (operator == 22);
+}
+
+inline bool IsPrecedence10(int operator)
+{
+	return (operator == 23);
+}
+
+inline bool IsPrecedence11(int operator)
+{
+	return (operator == 24);
+}
+
+inline bool IsPrecedence12(int operator)
+{
+	return (operator == 25);
+}
+
+inline bool IsPrecedence13(int operator)
+{
+	return (operator == 26);
+}
+
+inline bool IsPrecedence14(int operator)
+{
+	return (operator >= 27 && operator <= 38);
+}
+
+inline bool IsPrecedence15(int operator)
+{
+	return (operator == 39);
+}

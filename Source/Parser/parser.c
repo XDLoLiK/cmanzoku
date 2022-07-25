@@ -57,15 +57,13 @@ struct Parser *Parser_New(const char *fileName)
     parser->fileName = fileName;
     
     parser->tok = Tokenizer_New(fileName);
-    if (parser->tok->errorCode != TOK_ERR_NoError) {
+    parser->currentToken = Tokenizer_GetNextToken(parser->tok);
+
+    if (parser->tok->errorCode != TOK_ERR_NoError || parser->currentToken == NULL) {
         parser->errorCode = PARSER_ERR_TokenizerError;
         return parser;
     }
 
-    parser->currentToken = Tokenizer_GetNextToken(parser->tok);
-    if (parser->currentToken == NULL) {
-        RAISE(PARSER_ERR_TokenizerError);
-    }
     parser->errorCode = PARSER_ERR_NoError;
     return parser;
 }
@@ -472,7 +470,7 @@ struct Tree_Node *Parser_GetComma(struct Parser *parser)
 {
     struct Tree_Node *newNode = Parser_GetAssignment(parser);
 
-    while (parser->currentToken->operator == TOKEN_OP_Comma) {
+    while (IsPrecedence15(parser->currentToken->operator)) {
         struct Tree_Node *operator = Tree_NewNode(parser->currentToken);
         Parser_Advance(parser);
 
@@ -489,12 +487,7 @@ struct Tree_Node *Parser_GetAssignment(struct Parser *parser)
 {
     struct Tree_Node *newNode = Parser_GetLogicalOr(parser);
     
-    while (parser->currentToken->operator == TOKEN_OP_Assignment  || parser->currentToken->operator == TOKEN_OP_BitorEqual  ||
-           parser->currentToken->operator == TOKEN_OP_AddEqual    || parser->currentToken->operator == TOKEN_OP_BitandEqual ||
-           parser->currentToken->operator == TOKEN_OP_SubEqual    || parser->currentToken->operator == TOKEN_OP_BitxorEqual ||
-           parser->currentToken->operator == TOKEN_OP_MulEqual    || parser->currentToken->operator == TOKEN_OP_DivEqual    || 
-           parser->currentToken->operator == TOKEN_OP_BitshlEqual || parser->currentToken->operator == TOKEN_OP_ModEqual    || 
-           parser->currentToken->operator == TOKEN_OP_BitshrEqual || parser->currentToken->operator == TOKEN_OP_PowEqual) {
+    while (IsPrecedence14(parser->currentToken->operator)) {
 
         struct Tree_Node *operator = Tree_NewNode(parser->currentToken);
         Parser_Advance(parser);
@@ -512,7 +505,7 @@ struct Tree_Node *Parser_GetLogicalOr(struct Parser *parser)
 {
     struct Tree_Node *newNode = Parser_GetLogicalAnd(parser);
 
-    while (parser->currentToken->operator == TOKEN_OP_Lor) {
+    while (IsPrecedence13(parser->currentToken->operator)) {
         struct Tree_Node *operator = Tree_NewNode(parser->currentToken);
         Parser_Advance(parser);
 
@@ -529,7 +522,7 @@ struct Tree_Node *Parser_GetLogicalAnd(struct Parser *parser)
 {
     struct Tree_Node *newNode = Parser_GetBitOr(parser);
 
-    while (parser->currentToken->operator == TOKEN_OP_Land) {
+    while (IsPrecedence12(parser->currentToken->operator)) {
         struct Tree_Node *operator = Tree_NewNode(parser->currentToken);
         Parser_Advance(parser);
 
@@ -546,7 +539,7 @@ struct Tree_Node *Parser_GetBitOr(struct Parser *parser)
 {
     struct Tree_Node *newNode = Parser_GetBitXor(parser);
 
-    while (parser->currentToken->operator == TOKEN_OP_Bitor) {
+    while (IsPrecedence11(parser->currentToken->operator)) {
         struct Tree_Node *operator = Tree_NewNode(parser->currentToken);
         Parser_Advance(parser);
 
@@ -563,7 +556,7 @@ struct Tree_Node *Parser_GetBitXor(struct Parser *parser)
 {
     struct Tree_Node *newNode = Parser_GetBitAnd(parser);
 
-    while (parser->currentToken->operator == TOKEN_OP_Bitxor) {
+    while (IsPrecedence10(parser->currentToken->operator)) {
         struct Tree_Node *operator = Tree_NewNode(parser->currentToken);
         Parser_Advance(parser);
 
@@ -580,7 +573,7 @@ struct Tree_Node *Parser_GetBitAnd(struct Parser *parser)
 {
     struct Tree_Node *newNode = Parser_GetEquality(parser);
 
-    while (parser->currentToken->operator == TOKEN_OP_Bitand) {
+    while (IsPrecedence9(parser->currentToken->operator)) {
         struct Tree_Node *operator = Tree_NewNode(parser->currentToken);
         Parser_Advance(parser);
 
@@ -597,8 +590,7 @@ struct Tree_Node *Parser_GetEquality(struct Parser *parser)
 {
     struct Tree_Node *newNode = Parser_GetComparison(parser);
 
-    while (parser->currentToken->operator == TOKEN_OP_Equals ||
-           parser->currentToken->operator == TOKEN_OP_Nequals) {
+    while (IsPrecedence8(parser->currentToken->operator)) {
         struct Tree_Node *operator = Tree_NewNode(parser->currentToken);
         Parser_Advance(parser);
 
@@ -615,10 +607,7 @@ struct Tree_Node *Parser_GetComparison(struct Parser *parser)
 {
     struct Tree_Node *newNode = Parser_GetBitShift(parser);
 
-    while (parser->currentToken->operator == TOKEN_OP_Less    ||
-           parser->currentToken->operator == TOKEN_OP_Greater ||
-           parser->currentToken->operator == TOKEN_OP_Lesseq  ||
-           parser->currentToken->operator == TOKEN_OP_Greatereq) {
+    while (IsPrecedence7(parser->currentToken->operator)) {
         struct Tree_Node *operator = Tree_NewNode(parser->currentToken);
         Parser_Advance(parser);
 
@@ -635,8 +624,7 @@ struct Tree_Node *Parser_GetBitShift(struct Parser *parser)
 {
     struct Tree_Node *newNode = Parser_GetAddSub(parser);
 
-    while (parser->currentToken->operator == TOKEN_OP_Bitshr ||
-           parser->currentToken->operator == TOKEN_OP_Bitshl) {
+    while (IsPrecedence6(parser->currentToken->operator)) {
         struct Tree_Node *operator = Tree_NewNode(parser->currentToken);
         Parser_Advance(parser);
 
@@ -653,8 +641,7 @@ struct Tree_Node *Parser_GetAddSub(struct Parser *parser)
 {
     struct Tree_Node *newNode = Parser_GetMulDivMod(parser);
 
-    while (parser->currentToken->operator == TOKEN_OP_Add ||
-           parser->currentToken->operator == TOKEN_OP_Sub) {
+    while (IsPrecedence5(parser->currentToken->operator)) {
         struct Tree_Node *operator = Tree_NewNode(parser->currentToken);
         Parser_Advance(parser);
 
@@ -671,9 +658,7 @@ struct Tree_Node *Parser_GetMulDivMod(struct Parser *parser)
 {
     struct Tree_Node *newNode = Parser_GetUnarySign(parser);
 
-    while (parser->currentToken->operator == TOKEN_OP_Mul ||
-           parser->currentToken->operator == TOKEN_OP_Div ||
-           parser->currentToken->operator == TOKEN_OP_Mod) {
+    while (IsPrecedence4(parser->currentToken->operator)) {
         struct Tree_Node *operator = Tree_NewNode(parser->currentToken);
         Parser_Advance(parser);
 

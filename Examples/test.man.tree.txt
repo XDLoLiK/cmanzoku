@@ -29,7 +29,7 @@
 		{
 			new
 			type: 4
-			value: 32
+			value: 41
 			line: 3
 			column: 15
 			context: 	var num = 5.0;
@@ -43,7 +43,7 @@
 				{
 					new
 					type: 4
-					value: 21
+					value: 27
 					line: 3
 					column: 10
 					context: 	var num = 5.0;
@@ -83,14 +83,14 @@
 			{
 				new
 				type: 4
-				value: 32
+				value: 41
 				line: 4
 				column: 26
 				context: 	factorial_recursive(num);
 				{
 					new
 					type: 4
-					value: 53
+					value: 2
 					line: 0
 					column: 0
 					context: (null)
@@ -126,14 +126,14 @@
 				{
 					new
 					type: 4
-					value: 32
+					value: 41
 					line: 5
 					column: 26
 					context: 	factorial_iterative(num);
 					{
 						new
 						type: 4
-						value: 53
+						value: 2
 						line: 0
 						column: 0
 						context: (null)
@@ -169,7 +169,7 @@
 					{
 						new
 						type: 4
-						value: 32
+						value: 41
 						line: 6
 						column: 7
 						context: 	ret 0;
@@ -248,7 +248,7 @@
 			{
 				new
 				type: 4
-				value: 32
+				value: 41
 				line: 0
 				column: 0
 				context: (null)
@@ -262,7 +262,7 @@
 					{
 						new
 						type: 4
-						value: 30
+						value: 19
 						line: 11
 						column: 10
 						context: 	if (num <= 1) {
@@ -298,7 +298,7 @@
 					{
 						new
 						type: 4
-						value: 32
+						value: 41
 						line: 12
 						column: 8
 						context: 		ret 1;
@@ -335,7 +335,7 @@
 				{
 					new
 					type: 4
-					value: 32
+					value: 41
 					line: 14
 					column: 40
 					context: 	ret num * factorial_recursive(num - 1);
@@ -349,7 +349,7 @@
 						{
 							new
 							type: 4
-							value: 12
+							value: 9
 							line: 14
 							column: 10
 							context: 	ret num * factorial_recursive(num - 1);
@@ -370,7 +370,7 @@
 							{
 								new
 								type: 4
-								value: 53
+								value: 2
 								line: 0
 								column: 0
 								context: (null)
@@ -391,7 +391,7 @@
 								{
 									new
 									type: 4
-									value: 11
+									value: 13
 									line: 14
 									column: 36
 									context: 	ret num * factorial_recursive(num - 1);
@@ -478,7 +478,7 @@
 				{
 					new
 					type: 4
-					value: 32
+					value: 41
 					line: 19
 					column: 14
 					context: 	var ans  = 1;
@@ -492,7 +492,7 @@
 						{
 							new
 							type: 4
-							value: 21
+							value: 27
 							line: 19
 							column: 11
 							context: 	var ans  = 1;
@@ -532,7 +532,7 @@
 					{
 						new
 						type: 4
-						value: 32
+						value: 41
 						line: 0
 						column: 0
 						context: (null)
@@ -546,7 +546,7 @@
 							{
 								new
 								type: 4
-								value: 28
+								value: 17
 								line: 20
 								column: 13
 								context: 	while (num > 1) {
@@ -582,14 +582,14 @@
 							{
 								new
 								type: 4
-								value: 32
+								value: 41
 								line: 21
 								column: 18
 								context: 		ans = ans * num;
 								{
 									new
 									type: 4
-									value: 21
+									value: 27
 									line: 21
 									column: 7
 									context: 		ans = ans * num;
@@ -610,7 +610,7 @@
 									{
 										new
 										type: 4
-										value: 12
+										value: 9
 										line: 21
 										column: 13
 										context: 		ans = ans * num;
@@ -647,14 +647,14 @@
 								{
 									new
 									type: 4
-									value: 32
+									value: 41
 									line: 22
 									column: 16
 									context: 		num = num - 1;
 									{
 										new
 										type: 4
-										value: 21
+										value: 27
 										line: 22
 										column: 7
 										context: 		num = num - 1;
@@ -675,7 +675,7 @@
 										{
 											new
 											type: 4
-											value: 11
+											value: 13
 											line: 22
 											column: 13
 											context: 		num = num - 1;
@@ -718,7 +718,7 @@
 						{
 							new
 							type: 4
-							value: 32
+							value: 41
 							line: 24
 							column: 9
 							context: 	ret ans;
