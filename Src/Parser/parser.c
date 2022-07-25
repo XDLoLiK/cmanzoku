@@ -489,13 +489,12 @@ struct Tree_Node *Parser_GetAssignment(struct Parser *parser)
 {
     struct Tree_Node *newNode = Parser_GetLogicalOr(parser);
     
-    while (parser->currentToken->operator == TOKEN_OP_Assignment || parser->currentToken->operator == TOKEN_OP_BitorEqual  ||
-           parser->currentToken->operator == TOKEN_OP_AddEqual   || parser->currentToken->operator == TOKEN_OP_BitandEqual ||
-           parser->currentToken->operator == TOKEN_OP_SubEqual   || parser->currentToken->operator == TOKEN_OP_BitxorEqual ||
-           parser->currentToken->operator == TOKEN_OP_MulEqual   || parser->currentToken->operator == TOKEN_OP_BitnotEqual ||
-           parser->currentToken->operator == TOKEN_OP_DivEqual   || parser->currentToken->operator == TOKEN_OP_BitshlEqual ||
-           parser->currentToken->operator == TOKEN_OP_ModEqual   || parser->currentToken->operator == TOKEN_OP_BitshrEqual ||
-           parser->currentToken->operator == TOKEN_OP_PowEqual) {
+    while (parser->currentToken->operator == TOKEN_OP_Assignment  || parser->currentToken->operator == TOKEN_OP_BitorEqual  ||
+           parser->currentToken->operator == TOKEN_OP_AddEqual    || parser->currentToken->operator == TOKEN_OP_BitandEqual ||
+           parser->currentToken->operator == TOKEN_OP_SubEqual    || parser->currentToken->operator == TOKEN_OP_BitxorEqual ||
+           parser->currentToken->operator == TOKEN_OP_MulEqual    || parser->currentToken->operator == TOKEN_OP_DivEqual    || 
+           parser->currentToken->operator == TOKEN_OP_BitshlEqual || parser->currentToken->operator == TOKEN_OP_ModEqual    || 
+           parser->currentToken->operator == TOKEN_OP_BitshrEqual || parser->currentToken->operator == TOKEN_OP_PowEqual) {
 
         struct Tree_Node *operator = Tree_NewNode(parser->currentToken);
         Parser_Advance(parser);
@@ -779,7 +778,7 @@ struct Tree_Node *Parser_GetIdentifier(struct Parser *parser)
             RAISE(PARSER_ERR_UnsuccessfulAllocation);
         }
         newIndexating->type = TOKEN_TYPE_Operator;
-        newIndexating->operator = TOKEN_OP_Index;
+        newIndexating->operator = TOKEN_OP_Indexate;
         struct Tree_Node *newNode = Tree_NewNode(newIndexating);
         struct Tree_Node *newIndex = Parser_GetExpression(parser);
         Parser_RequireOperator(parser, TOKEN_OP_Rsquare);

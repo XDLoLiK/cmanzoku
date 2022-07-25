@@ -203,6 +203,10 @@ struct Token *Tokenizer_RecognizeOperator(struct Tokenizer *tok)
             tok->bufferCurrent++;
             return Tokenizer_NewOperator(tok, TOKEN_OP_Semicolon);
 
+        case '~':
+            tok->bufferCurrent++;
+            return Tokenizer_NewOperator(tok, TOKEN_OP_Bitnot);
+
         case '/':
             tok->bufferCurrent++;
             switch (lookAheadOne) {
@@ -233,16 +237,6 @@ struct Token *Tokenizer_RecognizeOperator(struct Tokenizer *tok)
                     return Tokenizer_NewOperator(tok, TOKEN_OP_Assignment);
             }
 
-        case '~':
-            tok->bufferCurrent++;
-            switch (lookAheadOne) {
-                case '=': 
-                    tok->bufferCurrent++;
-                    return Tokenizer_NewOperator(tok, TOKEN_OP_BitnotEqual);
-                default:  
-                    return Tokenizer_NewOperator(tok, TOKEN_OP_Bitnot);
-            }
-
         case '^':
             tok->bufferCurrent++;
             switch (lookAheadOne) {
@@ -266,14 +260,21 @@ struct Token *Tokenizer_RecognizeOperator(struct Tokenizer *tok)
         case '-':
             tok->bufferCurrent++;
             switch (lookAheadOne) {
-                case '-': 
-                    tok->bufferCurrent++;
-                    return Tokenizer_NewOperator(tok, TOKEN_OP_Decrement);
                 case '=':
                     tok->bufferCurrent++;
                     return Tokenizer_NewOperator(tok, TOKEN_OP_SubEqual);
                 default:  
                     return Tokenizer_NewOperator(tok, TOKEN_OP_Sub);
+            }
+
+        case '+':
+            tok->bufferCurrent++;
+            switch (lookAheadOne) {
+                case '=': 
+                    tok->bufferCurrent++;
+                    return Tokenizer_NewOperator(tok, TOKEN_OP_AddEqual);
+                default:  
+                    return Tokenizer_NewOperator(tok, TOKEN_OP_Add);
             }
 
         case '|':
@@ -300,19 +301,6 @@ struct Token *Tokenizer_RecognizeOperator(struct Tokenizer *tok)
                     return Tokenizer_NewOperator(tok, TOKEN_OP_BitandEqual);
                 default:  
                     return Tokenizer_NewOperator(tok, TOKEN_OP_Bitand);
-            }
-
-        case '+':
-            tok->bufferCurrent++;
-            switch (lookAheadOne) {
-                case '+': 
-                    tok->bufferCurrent++;
-                    return Tokenizer_NewOperator(tok, TOKEN_OP_Increment);
-                case '=': 
-                    tok->bufferCurrent++;
-                    return Tokenizer_NewOperator(tok, TOKEN_OP_AddEqual);
-                default:  
-                    return Tokenizer_NewOperator(tok, TOKEN_OP_Add);
             }
 
         case '>':

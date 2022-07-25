@@ -274,10 +274,6 @@ int Tree_OperatorToString(char *buffer, enum Token_Code operator)
 			strcpy(buffer, "^=");
 			break;
 
-		case TOKEN_OP_BitnotEqual:
-			strcpy(buffer, "~=");
-			break;
-
 		case TOKEN_OP_BitshlEqual:
 			strcpy(buffer, "<<=");
 			break;
@@ -288,14 +284,6 @@ int Tree_OperatorToString(char *buffer, enum Token_Code operator)
 
 		case TOKEN_OP_PowEqual:
 			strcpy(buffer, "**=");
-			break;
-
-		case TOKEN_OP_Increment:
-			strcpy(buffer, "++");
-			break;
-
-		case TOKEN_OP_Decrement:
-			strcpy(buffer, "--");
 			break;
 
 		case TOKEN_OP_FunctionCall:
@@ -310,7 +298,7 @@ int Tree_OperatorToString(char *buffer, enum Token_Code operator)
 			strcpy(buffer, "eval");
 			break;
 
-		case TOKEN_OP_Index:
+		case TOKEN_OP_Indexate:
 			strcpy(buffer, "indexate");
 			break;
 
