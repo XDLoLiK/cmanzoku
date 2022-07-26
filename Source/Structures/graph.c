@@ -84,7 +84,7 @@ int Tree_DumpNode(struct Tree_Node *root, FILE *dotFile)
 
 		case TOKEN_TYPE_Number:
 			fprintf(dotFile, "\tnode%p [color=blue, label=\"<left> left | { %s | ", root, "NUMBER");
-			fprintf(dotFile, "%" PRId64 " } | <right> right\"];\n", root->token->number);
+			fprintf(dotFile, "%" PRId64 ".%" PRId64 " } | <right> right\"];\n", root->token->number / 100, root->token->number % 100);
 			break;
 
 		case TOKEN_TYPE_Operator:
