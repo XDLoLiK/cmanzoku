@@ -6,6 +6,14 @@ struct Tokenizer *Tokenizer_New(const char *fileName)
     if (tok == NULL) {
         return tok;
     }
+
+    tok->fileName = calloc(strlen(fileName) + 1, sizeof (char));
+    if (fileName == NULL) {
+        tok->errorCode = TOK_ERR_UnsuccessfulAllocation;
+        return tok;
+    }
+    strncpy(tok->fileName, fileName, strlen(fileName));
+    
     tok->file = fopen(fileName, "r");
     if (tok->file == NULL) {
         tok->errorCode = TOK_ERR_NotExistingFile;
@@ -415,15 +423,18 @@ struct Token *Tokenizer_NewIdentifier(struct Tokenizer *tok, char *identifier, i
     token->column = (int)(tok->currentToken  - tok->currentLine) + 1;
     token->length = (int)(tok->bufferCurrent - tok->currentToken);
 
+    token->file    = calloc(strlen(tok->fileName) + 1, sizeof (char));
     int lineLength = (int)(strchr(tok->currentLine, '\n') - tok->currentLine);
     token->context = calloc(lineLength + 1, sizeof (char));
-    if (token->context == NULL) {
+    if (token->context == NULL || token->file == NULL) {
         tok->errorCode = TOK_ERR_UnsuccessfulAllocation;
         free(token->identifier);
+        free(token->file);
         free(token);
         return NULL;
     }
     strncpy(token->context, tok->currentLine, lineLength);
+    strncpy(token->file,    tok->fileName,    strlen(tok->fileName));
 
     return token;
 }
@@ -448,6 +459,7 @@ struct Token *Tokenizer_NewString(struct Tokenizer *tok, char *string, int strin
     token->column = (int)(tok->currentToken  - tok->currentLine) + 1;
     token->length = (int)(tok->bufferCurrent - tok->currentToken);
 
+    token->file    = calloc(strlen(tok->fileName) + 1, sizeof (char));
     int lineLength = (int)(strchr(tok->currentLine, '\n') - tok->currentLine);
     token->context = calloc(lineLength + 1, sizeof (char));
     if (token->context == NULL) {
@@ -457,6 +469,7 @@ struct Token *Tokenizer_NewString(struct Tokenizer *tok, char *string, int strin
         return NULL;
     }
     strncpy(token->context, tok->currentLine, lineLength);
+    strncpy(token->file,    tok->fileName,    strlen(tok->fileName));
 
     return token;
 }
@@ -475,6 +488,7 @@ struct Token *Tokenizer_NewOperator(struct Tokenizer *tok, enum Token_Code code)
     token->column = (int)(tok->currentToken  - tok->currentLine) + 1;
     token->length = (int)(tok->bufferCurrent - tok->currentToken);
 
+    token->file    = calloc(strlen(tok->fileName) + 1, sizeof (char));
     int lineLength = (int)(strchr(tok->currentLine, '\n') - tok->currentLine);
     token->context = calloc(lineLength + 1, sizeof (char));
     if (token->context == NULL) {
@@ -483,6 +497,7 @@ struct Token *Tokenizer_NewOperator(struct Tokenizer *tok, enum Token_Code code)
         return NULL;
     }
     strncpy(token->context, tok->currentLine, lineLength);
+    strncpy(token->file,    tok->fileName,    strlen(tok->fileName));
 
     return token;
 }
@@ -501,6 +516,7 @@ struct Token *Tokenizer_NewNumber(struct Tokenizer *tok, int64_t number)
     token->column = (int)(tok->currentToken  - tok->currentLine) + 1;
     token->length = (int)(tok->bufferCurrent - tok->currentToken);
 
+    token->file    = calloc(strlen(tok->fileName) + 1, sizeof (char));
     int lineLength = (int)(strchr(tok->currentLine, '\n') - tok->currentLine);
     token->context = calloc(lineLength + 1, sizeof (char));
     if (token->context == NULL) {
@@ -509,6 +525,7 @@ struct Token *Tokenizer_NewNumber(struct Tokenizer *tok, int64_t number)
         return NULL;
     }
     strncpy(token->context, tok->currentLine, lineLength);
+    strncpy(token->file,    tok->fileName,    strlen(tok->fileName));
 
     return token;
 }

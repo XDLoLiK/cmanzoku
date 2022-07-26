@@ -25,6 +25,7 @@ struct Tokenizer {
     char *bufferStart;
     char *bufferCurrent;
     char *bufferEnd;
+    char *fileName;
     FILE *file;
     enum Tokenizer_Error errorCode;
     int lineNumber;

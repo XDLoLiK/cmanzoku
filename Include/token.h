@@ -129,6 +129,7 @@ struct Token {
 
     // debug info
     char *context;
+    char *file;
     int line;
     int column;
     int length;

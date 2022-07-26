@@ -11,9 +11,9 @@ void Man_PrintError(struct Token *token, const char *message)
 		abort();
 	}
 
-	fprintf(stderr, "%d:%d: " RED("error:") " %s\n"
+	fprintf(stderr, "%s:%d:%d: " RED("error:") " %s\n"
 					"  %d | %s\n",
-					token->line, token->column,
+					token->file, token->line, token->column,
 					message, token->line, token->context);
 
 	for (int i = 0; i < numlen(token->line) + 3; i++) {
