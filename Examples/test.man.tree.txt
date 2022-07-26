@@ -584,22 +584,22 @@
 								type: 4
 								value: 41
 								line: 21
-								column: 18
-								context: 		ans = ans * num;
+								column: 13
+								context: 		ans *= num;
 								{
 									new
 									type: 4
-									value: 27
+									value: 30
 									line: 21
 									column: 7
-									context: 		ans = ans * num;
+									context: 		ans *= num;
 									{
 										new
 										type: 3
 										value: ans
 										line: 21
 										column: 3
-										context: 		ans = ans * num;
+										context: 		ans *= num;
 										{
 											nil
 										}
@@ -609,38 +609,16 @@
 									}
 									{
 										new
-										type: 4
-										value: 9
+										type: 3
+										value: num
 										line: 21
-										column: 13
-										context: 		ans = ans * num;
+										column: 10
+										context: 		ans *= num;
 										{
-											new
-											type: 3
-											value: ans
-											line: 21
-											column: 9
-											context: 		ans = ans * num;
-											{
-												nil
-											}
-											{
-												nil
-											}
+											nil
 										}
 										{
-											new
-											type: 3
-											value: num
-											line: 21
-											column: 15
-											context: 		ans = ans * num;
-											{
-												nil
-											}
-											{
-												nil
-											}
+											nil
 										}
 									}
 								}
@@ -649,22 +627,22 @@
 									type: 4
 									value: 41
 									line: 22
-									column: 16
-									context: 		num = num - 1;
+									column: 11
+									context: 		num -= 1;
 									{
 										new
 										type: 4
-										value: 27
+										value: 29
 										line: 22
 										column: 7
-										context: 		num = num - 1;
+										context: 		num -= 1;
 										{
 											new
 											type: 3
 											value: num
 											line: 22
 											column: 3
-											context: 		num = num - 1;
+											context: 		num -= 1;
 											{
 												nil
 											}
@@ -674,38 +652,16 @@
 										}
 										{
 											new
-											type: 4
-											value: 13
+											type: 1
+											value: 100
 											line: 22
-											column: 13
-											context: 		num = num - 1;
+											column: 10
+											context: 		num -= 1;
 											{
-												new
-												type: 3
-												value: num
-												line: 22
-												column: 9
-												context: 		num = num - 1;
-												{
-													nil
-												}
-												{
-													nil
-												}
+												nil
 											}
 											{
-												new
-												type: 1
-												value: 100
-												line: 22
-												column: 15
-												context: 		num = num - 1;
-												{
-													nil
-												}
-												{
-													nil
-												}
+												nil
 											}
 										}
 									}

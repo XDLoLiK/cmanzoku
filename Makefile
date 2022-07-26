@@ -17,6 +17,7 @@ ASFLAGS = -felf64
 
 ifeq ($(BUILD), debug)
 	BUILD_DIR = Build
+	ASFLAGS += -g
 	СCFLAGS += -O0 -g -fdiagnostics-color=always
 	CXXFLAGS += -O0 -g -fdiagnostics-color=always
 else
@@ -50,9 +51,14 @@ $(AS_OBJ) : $(BIN_DIR)/%.asm.o : $(SRC_DIR)/%.asm
 .PHONY: info clean
 
 info:
-	@echo [*] CC:      $(CC)
-	@echo [*] Sources: ${SRC} ${ASM}
-	@echo [*] Objects: ${CC_OBJ} $(AS_OBJ)
+	@echo [*] CC:       $(CC)
+	@echo [*] CCFLAGS:  $(СCFLAGS)
+	@echo [*] CXX:      $(CXX)
+	@echo [*] CXXFLAGS: $(CXXFLAGS)
+	@echo [*] ASM:      $(AS)
+	@echo [*] ASMFLAGS: $(ASFLAGS)
+	@echo [*] Sources:  ${SRC} ${ASM}
+	@echo [*] Objects:  ${CC_OBJ} $(AS_OBJ)
 
 clean:
 	rm -rf $(BIN_DIR)

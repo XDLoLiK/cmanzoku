@@ -1,4 +1,4 @@
-; test2.man.asm
+; Examples/test2.man.asm
 
 global _start
 
@@ -20,11 +20,7 @@ main:
 		push qword 500
 		pop rax
 		mov qword [rbp - 8 * 1], rax
-		; x
-		push qword [rbp - 8 * 1]
-		; ret
-		pop rax
+		; postamble
 		add rsp, 8 * 1
 		pop rbp
 		ret
-		add rsp, 8 * 1

@@ -86,8 +86,8 @@ int Compiler_VarDeclListing(struct Compiler *compiler, struct Tree_Node *varDecl
         fprintf(compiler->listingFile, "\t\t; %s\n", currentIdentifier);
         Compiler_ExpressionListing(compiler, currentNode->left->right);
         fprintf(compiler->listingFile, "\t\tpop rax\n"
-                                       "\t\tmov qword [rbp - 8 * %d], rax\n",
-                                       variableOffset);
+                                       "\t\tmov qword [rbp - %d], rax\n",
+                                       variableOffset * 8);
 
         currentNode = currentNode->right;
     }
@@ -194,7 +194,9 @@ int Compiler_MultilineOperatorListing(struct Compiler *compiler, struct Tree_Nod
         }
          
         Compiler_ExpressionListing(compiler, currentNode->left);
-        fprintf(compiler->listingFile, "\t\tadd rsp, 8 * 1\n");
+        if (!(currentNode->left->token->type == TOKEN_TYPE_Operator && currentNode->left->token->operator == TOKEN_KW_Return)) {
+            fprintf(compiler->listingFile, "\t\tadd rsp, 8\n");
+        }
         currentNode = currentNode->right;
         continue;   
     }
@@ -221,7 +223,7 @@ int Compiler_ExpressionListing(struct Compiler *compiler, struct Tree_Node *expr
                 // excluding top stack element as the value of comma
                 // operator is the value of the rightest operand
                 fprintf(compiler->listingFile, "\t\t; ,\n"
-                                               "\t\tadd rsp, 8 * 1\n");
+                                               "\t\tadd rsp, 8\n");
                 break;
 
             case TOKEN_OP_Bitor:
@@ -495,10 +497,10 @@ int Compiler_ExpressionListing(struct Compiler *compiler, struct Tree_Node *expr
             case TOKEN_KW_Return:
                 fprintf(compiler->listingFile, "\t\t; ret\n"
                                                "\t\tpop rax\n"
-                                               "\t\tadd rsp, 8 * %d\n"
+                                               "\t\tadd rsp, %d\n"
                                                "\t\tpop rbp\n"
                                                "\t\tret\n",
-                                               compiler->localVarAmount);
+                                               compiler->localVarAmount * 8);
                 break;
 
             case TOKEN_OP_Assignment:
@@ -510,16 +512,83 @@ int Compiler_ExpressionListing(struct Compiler *compiler, struct Tree_Node *expr
                 fprintf(compiler->listingFile, "\t\t; =\n"
                                                "\t\tpop rax\n"
                                                "\t\tpop rbx\n"
-                                               "\t\tmov [rbp - 8 * %d], rax\n"
+                                               "\t\tmov [rbp - %d], rax\n"
                                                "\t\tpush rax\n",
-                                               *(int *)HashTable_Find(compiler->identifiersList, uniqueIdentifier));
+                                               *(int *)HashTable_Find(compiler->identifiersList, uniqueIdentifier) * 8);
                 break;
+
+            case TOKEN_OP_AddEqual: {
+                char *currentIdentifier = expressionNode->left->token->identifier;
+                char uniqueIdentifier[MAX_IDENTIFIER_LENGTH << 1] = "";
+                strncpy(uniqueIdentifier, compiler->currentScope, MAX_IDENTIFIER_LENGTH);
+                strncat(uniqueIdentifier, currentIdentifier,      MAX_IDENTIFIER_LENGTH);
+
+                fprintf(compiler->listingFile, "\t\t; =\n"
+                                               "\t\tpop rbx\n"
+                                               "\t\tpop rax\n"
+                                               "\t\tadd rax, rbx\n"
+                                               "\t\tmov [rbp - %d], rax\n"
+                                               "\t\tpush rax\n",
+                                               *(int *)HashTable_Find(compiler->identifiersList, uniqueIdentifier) * 8);
+                break;
+            }
+
+            case TOKEN_OP_SubEqual: {
+                char *currentIdentifier = expressionNode->left->token->identifier;
+                char uniqueIdentifier[MAX_IDENTIFIER_LENGTH << 1] = "";
+                strncpy(uniqueIdentifier, compiler->currentScope, MAX_IDENTIFIER_LENGTH);
+                strncat(uniqueIdentifier, currentIdentifier,      MAX_IDENTIFIER_LENGTH);
+
+                fprintf(compiler->listingFile, "\t\t; =\n"
+                                               "\t\tpop rbx\n"
+                                               "\t\tpop rax\n"
+                                               "\t\tsub rax, rbx\n"
+                                               "\t\tmov [rbp - %d], rax\n"
+                                               "\t\tpush rax\n",
+                                               *(int *)HashTable_Find(compiler->identifiersList, uniqueIdentifier) * 8);
+                break;
+            }
+
+            case TOKEN_OP_MulEqual: {
+                char *currentIdentifier = expressionNode->left->token->identifier;
+                char uniqueIdentifier[MAX_IDENTIFIER_LENGTH << 1] = "";
+                strncpy(uniqueIdentifier, compiler->currentScope, MAX_IDENTIFIER_LENGTH);
+                strncat(uniqueIdentifier, currentIdentifier,      MAX_IDENTIFIER_LENGTH);
+
+                fprintf(compiler->listingFile, "\t\t; =\n"
+                                               "\t\tpop rbx\n"
+                                               "\t\tpop rax\n"
+                                               "\t\timul rax, rbx\n"
+                                               "\t\tmov rcx, 100\n"
+                                               "\t\tidiv rcx\n"
+                                               "\t\tmov [rbp - %d], rax\n"
+                                               "\t\tpush rax\n",
+                                               *(int *)HashTable_Find(compiler->identifiersList, uniqueIdentifier) * 8);
+                break;
+            }
+
+            case TOKEN_OP_DivEqual: {
+                char *currentIdentifier = expressionNode->left->token->identifier;
+                char uniqueIdentifier[MAX_IDENTIFIER_LENGTH << 1] = "";
+                strncpy(uniqueIdentifier, compiler->currentScope, MAX_IDENTIFIER_LENGTH);
+                strncat(uniqueIdentifier, currentIdentifier,      MAX_IDENTIFIER_LENGTH);
+
+                fprintf(compiler->listingFile, "\t\t; =\n"
+                                               "\t\tpop rbx\n"
+                                               "\t\tpop rax\n"
+                                               "\t\timul rax, 100\n"
+                                               "\t\tidiv rbx\n"
+                                               "\t\tmov [rbp - %d], rax\n"
+                                               "\t\tpush rax\n",
+                                               *(int *)HashTable_Find(compiler->identifiersList, uniqueIdentifier) * 8);
+                break;
+            }
 
             case TOKEN_OP_FunctionCall:
                 fprintf(compiler->listingFile, "\t\t; %s call\n", expressionNode->left->token->identifier);
                 Compiler_FunctionArgsListing(compiler, expressionNode->right);
                 fprintf(compiler->listingFile, "\t\tcall %s\n", expressionNode->left->token->identifier);
-                fprintf(compiler->listingFile, "\t\tadd rsp, 8 * %d\n", Compiler_CountArgumetsAmount(compiler, expressionNode->right));
+                fprintf(compiler->listingFile, "\t\tadd rsp, %d\n", Compiler_CountArgumetsAmount(compiler, expressionNode->right) * 8);
                 fprintf(compiler->listingFile, "\t\tpush rax\n");
                 break;
 
@@ -541,8 +610,8 @@ int Compiler_ExpressionListing(struct Compiler *compiler, struct Tree_Node *expr
         strncat(uniqueIdentifier, currentIdentifier,      MAX_IDENTIFIER_LENGTH);
 
         fprintf(compiler->listingFile, "\t\t; %s\n", expressionNode->token->identifier);
-        fprintf(compiler->listingFile, "\t\tpush qword [rbp - 8 * %d]\n", 
-                                       *(int *)HashTable_Find(compiler->identifiersList, uniqueIdentifier));
+        fprintf(compiler->listingFile, "\t\tpush qword [rbp - %d]\n", 
+                                       *(int *)HashTable_Find(compiler->identifiersList, uniqueIdentifier) * 8);
     }
     
     if (expressionNode->token->type == TOKEN_TYPE_String) {
@@ -600,8 +669,7 @@ int Compiler_FunctionListing(struct Compiler *compiler, struct Tree_Node *functi
     Compiler_FunctionParamsListing(compiler, functionNode->left);
     Compiler_MultilineOperatorListing(compiler, functionNode->right);
 
-    /* SEEMS IT'S NOT NECESSARY */
-    // Compiler_FunctionPostambleListing(compiler);
+    Compiler_FunctionPostambleListing(compiler);
     return 0;
 }
 
@@ -618,10 +686,10 @@ int Compiler_FunctionParamsListing(struct Compiler *compiler, struct Tree_Node *
         compiler->localVarCount++;
         curParamsNumber++;
         fprintf(compiler->listingFile, "\t\t; %s\n", currentNode->left->token->identifier);
-        fprintf(compiler->listingFile, "\t\tmov rax, [rbp + 8 * %d]\n"
-                                       "\t\tmov qword [rbp - 8 * %d], rax\n", 
-                                       1 + curParamsNumber,
-                                       compiler->localVarCount);
+        fprintf(compiler->listingFile, "\t\tmov rax, [rbp + %d]\n"
+                                       "\t\tmov qword [rbp - %d], rax\n", 
+                                       (1 + curParamsNumber)   * 8,
+                                       compiler->localVarCount * 8);
 
         char *currentIdentifier = currentNode->left->token->identifier;
         char uniqueIdentifier[MAX_IDENTIFIER_LENGTH << 1] = "";
@@ -645,8 +713,8 @@ int Compiler_FunctionPreambleListing(struct Compiler *compiler)
     fprintf(compiler->listingFile, "\t\t; preamble\n"
                                    "\t\tpush rbp\n"
                                    "\t\tmov rbp, rsp\n"
-                                   "\t\tsub rsp, 8 * %d\n",
-                                   compiler->localVarAmount);
+                                   "\t\tsub rsp, %d\n",
+                                   compiler->localVarAmount * 8);
     return 0;
 }
 
@@ -657,10 +725,10 @@ int Compiler_FunctionPostambleListing(struct Compiler *compiler)
     }
 
     fprintf(compiler->listingFile, "\t\t; postamble\n");
-    fprintf(compiler->listingFile, "\t\tadd rsp, 8 * %d\n"
+    fprintf(compiler->listingFile, "\t\tadd rsp, %d\n"
                                    "\t\tpop rbp\n"
                                    "\t\tret\n",
-                                   compiler->localVarAmount);
+                                   compiler->localVarAmount * 8);
     return 0;
 }
 

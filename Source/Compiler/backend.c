@@ -26,6 +26,8 @@ int Backend_Main(const char *fileName)
 		return 1;
 	}
 	Compiler_CreateListing(compiler, syntaxTree);
+
+	/* NOT IMPLEMENTED YET */
 	// Compiler_CreateExecutable(compiler, syntaxTree);
 
 	syntaxTree = Tree_Delete(syntaxTree);

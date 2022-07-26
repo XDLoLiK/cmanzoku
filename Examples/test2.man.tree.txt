@@ -81,40 +81,7 @@
 				}
 			}
 			{
-				new
-				type: 4
-				value: 41
-				line: 4
-				column: 7
-				context: 	ret x;	
-				{
-					new
-					type: 4
-					value: 104
-					line: 4
-					column: 2
-					context: 	ret x;	
-					{
-						new
-						type: 3
-						value: x
-						line: 4
-						column: 6
-						context: 	ret x;	
-						{
-							nil
-						}
-						{
-							nil
-						}
-					}
-					{
-						nil
-					}
-				}
-				{
-					nil
-				}
+				nil
 			}
 		}
 	}
