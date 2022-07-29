@@ -1,4 +1,7 @@
-#include "compiler.h"
+#include "backend.h"
+
+extern int DUMP_AST_FLAG; 
+extern int CREATE_LISTING_FLAG;
 
 int Backend_Main(const char *fileName)
 {
@@ -19,13 +22,22 @@ int Backend_Main(const char *fileName)
 		return 1;
 	}
 	free(treeFileName);	
-	fclose(treeFile);
+
+	if (DUMP_AST_FLAG) {
+		fclose(treeFile);
+	}
+	else {
+		remove((const char *)treeFile);
+	}
 
 	struct Compiler *compiler = Compiler_New(fileName);
 	if (compiler == NULL) {
 		return 1;
 	}
-	Compiler_CreateListing(compiler, syntaxTree);
+
+	if (CREATE_LISTING_FLAG) {
+		Compiler_CreateListing(compiler, syntaxTree);
+	}
 
 	/* NOT IMPLEMENTED YET */
 	// Compiler_CreateExecutable(compiler, syntaxTree);

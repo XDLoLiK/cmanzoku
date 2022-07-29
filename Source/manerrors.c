@@ -1,14 +1,26 @@
 #include "manerrors.h"
 
-void Man_PrintError(struct Token *token, const char *message)
+void Man_PrintError(struct Token *token, const char *format, ...)
 {
-	if (message == NULL) {
-		abort();
+	if (format == NULL) {
+		fprintf(stderr, RED("error:") " unexpected error\n");
+		exit(1);
 	}
 
+	char *message = calloc(MAX_MSG_LENGTH, sizeof (char));
+	if (message == NULL) {
+		fprintf(stderr, RED("error:") " not enough memory\n");
+		exit(1);
+	}
+	va_list args;
+	va_start(args, format);
+	vsprintf(message, format, args);
+	va_end(args);
+
 	if (token == NULL) {
-		fprintf(stderr, RED("%s\n"), message);
-		abort();
+		fprintf(stderr, RED("error:") " %s\n", message);
+		free(message);
+		exit(1);
 	}
 
 	fprintf(stderr, "%s:%d:%d: " RED("error:") " %s\n"
@@ -30,5 +42,6 @@ void Man_PrintError(struct Token *token, const char *message)
 		fprintf(stderr, RED("~"));
 	}
 	fprintf(stderr, "\n" );
+	free(message);
 	exit(1);
 }

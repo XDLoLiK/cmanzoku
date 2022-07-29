@@ -10,14 +10,10 @@
 #include <string.h>
 #include <stdbool.h>
 
-// configuration
-#include "config.h"
-
 // general
 #include "token.h"
 #include "stdfunc.h"
 #include "manerrors.h"
-#include "astopt.h"
 
 // data structures
 #include "Structures/hashtable.h"

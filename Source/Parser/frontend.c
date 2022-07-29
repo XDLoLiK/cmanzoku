@@ -1,7 +1,16 @@
-#include "parser.h"
+#include "frontend.h"
+
+extern int DEBUG_LVL;
+extern int OPTIMIZATION_LVL;
+extern int DUMP_TOKENS_FLAG;
 
 int Frontend_Main(const char *fileName)
 {
+	// Process comand line flags
+	if (DUMP_TOKENS_FLAG) {
+		Frontend_DumpTokens(fileName);
+	}
+
 	struct Parser *parser = Parser_New(fileName);
 	if (parser == NULL) {
 		return 1;
@@ -25,15 +34,15 @@ int Frontend_Main(const char *fileName)
 		return 1;
 	}
 
-#ifdef OPTIMIZATION_ON
-	Tree_Optimize(&syntaxTreeRoot);
-#endif // OPTIMIZATION_ON
+	if (OPTIMIZATION_LVL >= 1) {
+		Tree_Optimize(&syntaxTreeRoot);
+	}
 
 	Tree_Upload(syntaxTreeRoot, treeFile, 0);
-
-#ifdef DEBUG_ON
-	Tree_CreateGraph(syntaxTreeRoot, fileName);
-#endif // DEBUG_ON
+	
+	if (DEBUG_LVL >= 1) {
+		Tree_CreateGraph(syntaxTreeRoot, fileName);
+	}
 
 	free(treeFileName);	
 	fclose(treeFile);

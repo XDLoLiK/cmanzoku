@@ -466,18 +466,17 @@ struct Tree_Node *Parser_GetExpression(struct Parser *parser)
     return Parser_GetComma(parser);
 }
 
-#ifndef NEW_EXPRESSION_RULE
-#define NEW_EXPRESSION_RULE(rule, depends_on, precedence)                   \
+#define NEW_EXPRESSION_RULE(rule, dependence, precedence)                   \
                                                                             \
 struct Tree_Node *Parser_Get##rule(struct Parser *parser)                   \
 {                                                                           \
-    struct Tree_Node *newNode = Parser_Get##depends_on(parser);             \
+    struct Tree_Node *newNode = Parser_Get##dependence(parser);             \
                                                                             \
     while (IsPrecedence##precedence(parser->currentToken->operator)) {      \
         struct Tree_Node *operator = Tree_NewNode(parser->currentToken);    \
         Parser_Advance(parser);                                             \
                                                                             \
-        struct Tree_Node *secondOperand = Parser_Get##depends_on(parser);   \
+        struct Tree_Node *secondOperand = Parser_Get##dependence(parser);   \
         operator->left  = newNode;                                          \
         operator->right = secondOperand;                                    \
         newNode = operator;                                                 \
@@ -499,8 +498,7 @@ NEW_EXPRESSION_RULE(BitShift,   AddSub,      6)
 NEW_EXPRESSION_RULE(AddSub,     MulDivMod,   5)
 NEW_EXPRESSION_RULE(MulDivMod,  UnarySign,   4)
 
-#undef    NEW_EXPRESSION_RULE
-#endif // NEW_EXPRESSION_RULE
+#undef NEW_EXPRESSION_RULE
 
 struct Tree_Node *Parser_GetUnarySign(struct Parser *parser)
 {
@@ -526,7 +524,6 @@ struct Tree_Node *Parser_GetParenthesis(struct Parser *parser)
         Parser_RequireOperator(parser, TOKEN_OP_Rround);
         Parser_Advance(parser);
         return newNode;
-
     }
     
     if (parser->currentToken->type == TOKEN_TYPE_Identifier) {
