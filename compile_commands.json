@@ -1,0 +1,211 @@
+[
+{
+  "directory": "/home/stanislav/cmanzoku",
+  "command": "gcc -MD -c -o Binary/Parser/tokenizer.c.o Source/Parser/tokenizer.c -Wall -Wextra -no-pie -msse4.2 -mavx2 -I Include -O0 -g -fdiagnostics-color=always",
+  "file": "Source/Parser/tokenizer.c"
+},
+
+{
+  "directory": "/home/stanislav/cmanzoku",
+  "command": "gcc -MD -c -o Binary/Parser/parser.c.o Source/Parser/parser.c -Wall -Wextra -no-pie -msse4.2 -mavx2 -I Include -O0 -g -fdiagnostics-color=always",
+  "file": "Source/Parser/parser.c"
+},
+
+{
+  "directory": "/home/stanislav/cmanzoku",
+  "command": "gcc -MD -c -o Binary/Parser/frontend.c.o Source/Parser/frontend.c -Wall -Wextra -no-pie -msse4.2 -mavx2 -I Include -O0 -g -fdiagnostics-color=always",
+  "file": "Source/Parser/frontend.c"
+},
+
+{
+  "directory": "/home/stanislav/cmanzoku",
+  "command": "gcc -MD -c -o Binary/Optimization/astopt.c.o Source/Optimization/astopt.c -Wall -Wextra -no-pie -msse4.2 -mavx2 -I Include -O0 -g -fdiagnostics-color=always",
+  "file": "Source/Optimization/astopt.c"
+},
+
+{
+  "directory": "/home/stanislav/cmanzoku",
+  "command": "gcc -MD -c -o Binary/Compiler/compiler.c.o Source/Compiler/compiler.c -Wall -Wextra -no-pie -msse4.2 -mavx2 -I Include -O0 -g -fdiagnostics-color=always",
+  "file": "Source/Compiler/compiler.c"
+},
+
+{
+  "directory": "/home/stanislav/cmanzoku",
+  "command": "gcc -MD -c -o Binary/Compiler/listing.c.o Source/Compiler/listing.c -Wall -Wextra -no-pie -msse4.2 -mavx2 -I Include -O0 -g -fdiagnostics-color=always",
+  "file": "Source/Compiler/listing.c"
+},
+
+{
+  "directory": "/home/stanislav/cmanzoku",
+  "command": "gcc -MD -c -o Binary/Compiler/backend.c.o Source/Compiler/backend.c -Wall -Wextra -no-pie -msse4.2 -mavx2 -I Include -O0 -g -fdiagnostics-color=always",
+  "file": "Source/Compiler/backend.c"
+},
+
+{
+  "directory": "/home/stanislav/cmanzoku",
+  "command": "gcc -MD -c -o Binary/Utils/type.c.o Source/Utils/type.c -Wall -Wextra -no-pie -msse4.2 -mavx2 -I Include -O0 -g -fdiagnostics-color=always",
+  "file": "Source/Utils/type.c"
+},
+
+{
+  "directory": "/home/stanislav/cmanzoku",
+  "command": "gcc -MD -c -o Binary/Utils/file.c.o Source/Utils/file.c -Wall -Wextra -no-pie -msse4.2 -mavx2 -I Include -O0 -g -fdiagnostics-color=always",
+  "file": "Source/Utils/file.c"
+},
+
+{
+  "directory": "/home/stanislav/cmanzoku",
+  "command": "gcc -MD -c -o Binary/Utils/maths.c.o Source/Utils/maths.c -Wall -Wextra -no-pie -msse4.2 -mavx2 -I Include -O0 -g -fdiagnostics-color=always",
+  "file": "Source/Utils/maths.c"
+},
+
+{
+  "directory": "/home/stanislav/cmanzoku",
+  "command": "gcc -MD -c -o Binary/manerrors.c.o Source/manerrors.c -Wall -Wextra -no-pie -msse4.2 -mavx2 -I Include -O0 -g -fdiagnostics-color=always",
+  "file": "Source/manerrors.c"
+},
+
+{
+  "directory": "/home/stanislav/cmanzoku",
+  "command": "gcc -MD -c -o Binary/variables.c.o Source/variables.c -Wall -Wextra -no-pie -msse4.2 -mavx2 -I Include -O0 -g -fdiagnostics-color=always",
+  "file": "Source/variables.c"
+},
+
+{
+  "directory": "/home/stanislav/cmanzoku",
+  "command": "gcc -MD -c -o Binary/Structures/graph.c.o Source/Structures/graph.c -Wall -Wextra -no-pie -msse4.2 -mavx2 -I Include -O0 -g -fdiagnostics-color=always",
+  "file": "Source/Structures/graph.c"
+},
+
+{
+  "directory": "/home/stanislav/cmanzoku",
+  "command": "gcc -MD -c -o Binary/Structures/list.c.o Source/Structures/list.c -Wall -Wextra -no-pie -msse4.2 -mavx2 -I Include -O0 -g -fdiagnostics-color=always",
+  "file": "Source/Structures/list.c"
+},
+
+{
+  "directory": "/home/stanislav/cmanzoku",
+  "command": "gcc -MD -c -o Binary/Structures/hashtable.c.o Source/Structures/hashtable.c -Wall -Wextra -no-pie -msse4.2 -mavx2 -I Include -O0 -g -fdiagnostics-color=always",
+  "file": "Source/Structures/hashtable.c"
+},
+
+{
+  "directory": "/home/stanislav/cmanzoku",
+  "command": "gcc -MD -c -o Binary/Structures/tree.c.o Source/Structures/tree.c -Wall -Wextra -no-pie -msse4.2 -mavx2 -I Include -O0 -g -fdiagnostics-color=always",
+  "file": "Source/Structures/tree.c"
+},
+
+{
+  "directory": "/home/stanislav/cmanzoku",
+  "command": "gcc -MD -c -o Binary/main.c.o Source/main.c -Wall -Wextra -no-pie -msse4.2 -mavx2 -I Include -O0 -g -fdiagnostics-color=always",
+  "file": "Source/main.c"
+},
+
+{
+  "directory": "/home/stanislav/cmanzoku",
+  "command": "gcc -MD -c -o Binary/token.c.o Source/token.c -Wall -Wextra -no-pie -msse4.2 -mavx2 -I Include -O0 -g -fdiagnostics-color=always",
+  "file": "Source/token.c"
+},
+
+{
+  "directory": "/home/stanislav/cmanzoku",
+  "command": "gcc -MD -Wall -Wextra -no-pie -msse4.2 -mavx2 -I Include -O0 -g -fdiagnostics-color=always -c Include/tokenizer.h",
+  "file": "Include/tokenizer.h"
+},
+
+{
+  "directory": "/home/stanislav/cmanzoku",
+  "command": "gcc -MD -Wall -Wextra -no-pie -msse4.2 -mavx2 -I Include -O0 -g -fdiagnostics-color=always -c Include/Manzoku.h",
+  "file": "Include/Manzoku.h"
+},
+
+{
+  "directory": "/home/stanislav/cmanzoku",
+  "command": "gcc -MD -Wall -Wextra -no-pie -msse4.2 -mavx2 -I Include -O0 -g -fdiagnostics-color=always -c Include/token.h",
+  "file": "Include/token.h"
+},
+
+{
+  "directory": "/home/stanislav/cmanzoku",
+  "command": "gcc -MD -Wall -Wextra -no-pie -msse4.2 -mavx2 -I Include -O0 -g -fdiagnostics-color=always -c Include/Utils/maths.h",
+  "file": "Include/Utils/maths.h"
+},
+
+{
+  "directory": "/home/stanislav/cmanzoku",
+  "command": "gcc -MD -Wall -Wextra -no-pie -msse4.2 -mavx2 -I Include -O0 -g -fdiagnostics-color=always -c Include/stdfunc.h",
+  "file": "Include/stdfunc.h"
+},
+
+{
+  "directory": "/home/stanislav/cmanzoku",
+  "command": "gcc -MD -Wall -Wextra -no-pie -msse4.2 -mavx2 -I Include -O0 -g -fdiagnostics-color=always -c Include/manerrors.h",
+  "file": "Include/manerrors.h"
+},
+
+{
+  "directory": "/home/stanislav/cmanzoku",
+  "command": "gcc -MD -Wall -Wextra -no-pie -msse4.2 -mavx2 -I Include -O0 -g -fdiagnostics-color=always -c Include/Structures/hashtable.h",
+  "file": "Include/Structures/hashtable.h"
+},
+
+{
+  "directory": "/home/stanislav/cmanzoku",
+  "command": "gcc -MD -Wall -Wextra -no-pie -msse4.2 -mavx2 -I Include -O0 -g -fdiagnostics-color=always -c Include/Structures/list.h",
+  "file": "Include/Structures/list.h"
+},
+
+{
+  "directory": "/home/stanislav/cmanzoku",
+  "command": "gcc -MD -Wall -Wextra -no-pie -msse4.2 -mavx2 -I Include -O0 -g -fdiagnostics-color=always -c Include/Structures/tree.h",
+  "file": "Include/Structures/tree.h"
+},
+
+{
+  "directory": "/home/stanislav/cmanzoku",
+  "command": "gcc -MD -Wall -Wextra -no-pie -msse4.2 -mavx2 -I Include -O0 -g -fdiagnostics-color=always -c Include/Structures/graph.h",
+  "file": "Include/Structures/graph.h"
+},
+
+{
+  "directory": "/home/stanislav/cmanzoku",
+  "command": "gcc -MD -Wall -Wextra -no-pie -msse4.2 -mavx2 -I Include -O0 -g -fdiagnostics-color=always -c Include/Utils/file.h",
+  "file": "Include/Utils/file.h"
+},
+
+{
+  "directory": "/home/stanislav/cmanzoku",
+  "command": "gcc -MD -Wall -Wextra -no-pie -msse4.2 -mavx2 -I Include -O0 -g -fdiagnostics-color=always -c Include/Utils/type.h",
+  "file": "Include/Utils/type.h"
+},
+
+{
+  "directory": "/home/stanislav/cmanzoku",
+  "command": "gcc -MD -Wall -Wextra -no-pie -msse4.2 -mavx2 -I Include -O0 -g -fdiagnostics-color=always -c Include/parser.h",
+  "file": "Include/parser.h"
+},
+
+{
+  "directory": "/home/stanislav/cmanzoku",
+  "command": "gcc -MD -Wall -Wextra -no-pie -msse4.2 -mavx2 -I Include -O0 -g -fdiagnostics-color=always -c Include/frontend.h",
+  "file": "Include/frontend.h"
+},
+
+{
+  "directory": "/home/stanislav/cmanzoku",
+  "command": "gcc -MD -Wall -Wextra -no-pie -msse4.2 -mavx2 -I Include -O0 -g -fdiagnostics-color=always -c Include/astopt.h",
+  "file": "Include/astopt.h"
+},
+
+{
+  "directory": "/home/stanislav/cmanzoku",
+  "command": "gcc -MD -Wall -Wextra -no-pie -msse4.2 -mavx2 -I Include -O0 -g -fdiagnostics-color=always -c Include/compiler.h",
+  "file": "Include/compiler.h"
+},
+
+{
+  "directory": "/home/stanislav/cmanzoku",
+  "command": "gcc -MD -Wall -Wextra -no-pie -msse4.2 -mavx2 -I Include -O0 -g -fdiagnostics-color=always -c Include/backend.h",
+  "file": "Include/backend.h"
+}
+]

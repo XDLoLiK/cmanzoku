@@ -1,4 +1,4 @@
-#include "Structures/hashtable.h"
+ #include "Structures/hashtable.h"
 
 struct HashTable *HashTable_New(size_t capacity, size_t keySize, size_t valueSize)
 {

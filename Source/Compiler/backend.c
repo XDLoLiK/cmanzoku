@@ -1,5 +1,6 @@
 #include "backend.h"
 
+extern int DEBUG_LVL;
 extern int DUMP_AST_FLAG; 
 extern int CREATE_LISTING_FLAG;
 
@@ -23,7 +24,7 @@ int Backend_Main(const char *fileName)
 	}
 	free(treeFileName);	
 
-	if (DUMP_AST_FLAG) {
+	if (DUMP_AST_FLAG || DEBUG_LVL >= 2) {
 		fclose(treeFile);
 	}
 	else {
@@ -35,7 +36,7 @@ int Backend_Main(const char *fileName)
 		return 1;
 	}
 
-	if (CREATE_LISTING_FLAG) {
+	if (CREATE_LISTING_FLAG || DEBUG_LVL >= 2) {
 		Compiler_CreateListing(compiler, syntaxTree);
 	}
 

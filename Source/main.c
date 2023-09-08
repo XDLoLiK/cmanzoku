@@ -1,10 +1,12 @@
 #include "frontend.h"
 #include "backend.h"
 
+extern int OPTIMIZATION_LVL;
+extern int DEBUG_LVL;
+
 extern int DUMP_TOKENS_FLAG;
 extern int DUMP_AST_FLAG;
 extern int CREATE_LISTING_FLAG;
-extern int OPTIMIZATION_LVL;
 
 int ProcessFlag(char *flag)
 {
@@ -22,7 +24,10 @@ int ProcessFlag(char *flag)
 		CREATE_LISTING_FLAG = 1;
 	}
 	else if (strncmp(flag, "-o", 2) == 0) {
-		OPTIMIZATION_LVL = min(3, *(flag + 2) - '0');
+		OPTIMIZATION_LVL = *(flag + 2) - '0';
+	}
+	else if (strncmp(flag, "-d", 2) == 0) {
+		DEBUG_LVL = *(flag + 2) - '0';
 	}
 
 	return 0;

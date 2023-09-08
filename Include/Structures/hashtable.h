@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <memory.h>
 
+#include "list.h"
+
 #define HT_NOT_FOUND NULL
 
 enum HashTable_State {

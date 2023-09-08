@@ -34,15 +34,14 @@ int Frontend_Main(const char *fileName)
 		return 1;
 	}
 
-	if (OPTIMIZATION_LVL >= 1) {
+	if (OPTIMIZATION_LVL >= 1 || DEBUG_LVL >= 2) {
 		Tree_Optimize(&syntaxTreeRoot);
 	}
-
-	Tree_Upload(syntaxTreeRoot, treeFile, 0);
-	
 	if (DEBUG_LVL >= 1) {
 		Tree_CreateGraph(syntaxTreeRoot, fileName);
 	}
+	
+	Tree_Upload(syntaxTreeRoot, treeFile, 0);
 
 	free(treeFileName);	
 	fclose(treeFile);

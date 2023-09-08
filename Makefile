@@ -2,9 +2,9 @@ APPLICATION = $(notdir $(CURDIR))
 
 BUILD = debug
 
-SRC_DIR   = Source
-BIN_DIR   = Binary
-INC_DIR   = Include
+SRC_DIR = Source
+BIN_DIR = Binary
+INC_DIR = Include
 
 CXX = g++
 CXXFLAGS = -Wall -Wextra -no-pie -msse4.2 -mavx2 -I $(INC_DIR)
@@ -32,6 +32,8 @@ ASM =  $(shell find $(SRC_DIR) -name "*.asm")
 
 CC_OBJ = $(addprefix $(BIN_DIR)/, $(SRC:$(SRC_DIR)/%=%.o))
 AS_OBJ = $(addprefix $(BIN_DIR)/, $(ASM:$(SRC_DIR)/%=%.o))
+
+all: $(BUILD_DIR)/$(APPLICATION)
 
 $(BUILD_DIR)/$(APPLICATION): $(CC_OBJ) $(AS_OBJ)
 	@mkdir -p $(dir $@)
